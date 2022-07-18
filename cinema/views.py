@@ -31,15 +31,6 @@ from cinema.serializers import (
 )
 
 
-# class GenreViewSet(
-#     ListModelMixin,
-#     CreateModelMixin,
-#     viewsets.GenericViewSet
-# ):
-#     queryset = Genre.objects.all()
-#     serializer_class = GenreSerializer
-#     authentication_classes = (TokenAuthentication, )
-#     permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
 class GenreViewSet(ListModelMixin, CreateModelMixin, viewsets.GenericViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
