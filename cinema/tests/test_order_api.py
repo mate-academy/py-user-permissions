@@ -19,7 +19,8 @@ def sample_order(user):
 def sample_ticket(order, **params):
     movie_session = sample_movie_session()
 
-    defaults = {"movie_session": movie_session, "row": 2, "seat": 2, "order": order}
+    defaults = {"movie_session": movie_session, "row": 2, "seat": 2,
+                "order": order}
 
     defaults.update(params)
 
