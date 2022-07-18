@@ -54,7 +54,8 @@ class PrivateMovieApiTests(TestCase):
     def test_retrieve_movie(self):
         movie = sample_movie()
         movie.genres.add(Genre.objects.create(name="Genre"))
-        movie.actors.add(Actor.objects.create(first_name="Actor", last_name="Last"))
+        movie.actors.add(
+            Actor.objects.create(first_name="Actor", last_name="Last"))
 
         url = detail_url(movie.id)
         response = self.client.get(url)
@@ -112,7 +113,8 @@ class AdminMovieApiTests(TestCase):
         }
 
         response = self.client.put(url, payload)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code,
+                         status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_delete_movie(self):
         movie = sample_movie()
@@ -120,4 +122,5 @@ class AdminMovieApiTests(TestCase):
         url = detail_url(movie.id)
         response = self.client.delete(url)
 
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code,
+                         status.HTTP_405_METHOD_NOT_ALLOWED)
