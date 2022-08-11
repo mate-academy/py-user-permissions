@@ -7,15 +7,15 @@ from rest_framework.settings import api_settings
 from user.serializers import UserSerializers
 
 
-class CreateUserViews(generics.CreateAPIView):
+class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializers
 
 
-class CreateTokenViews(ObtainAuthToken):
+class CreateTokenView(ObtainAuthToken):
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
 
-class ManageUserViews(generics.RetrieveUpdateAPIView):
+class ManageUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializers
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
