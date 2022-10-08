@@ -6,7 +6,6 @@ from user.models import User
 
 
 class UserCreateUpdateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = get_user_model()
         fields = ("id", "username", "email", "is_staff", "password")
@@ -15,7 +14,7 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
             "password": {
                 "write_only": True,
                 "min_length": 5,
-                "style": {"input_type": "password"}
+                "style": {"input_type": "password"},
             }
         }
 
