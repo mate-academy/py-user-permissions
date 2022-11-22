@@ -25,7 +25,9 @@ from cinema.serializers import (
 
 
 class GenreViewSet(
-    mixins.ListModelMixin, mixins.CreateModelMixin
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
 ):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -34,7 +36,9 @@ class GenreViewSet(
 
 
 class ActorViewSet(
-    mixins.ListModelMixin, mixins.CreateModelMixin
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
 ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
@@ -43,7 +47,9 @@ class ActorViewSet(
 
 
 class CinemaHallViewSet(
-    mixins.ListModelMixin, mixins.CreateModelMixin
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
 ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
