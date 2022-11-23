@@ -1,4 +1,6 @@
+from django.views import View
 from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.request import Request
 
 
 class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
@@ -7,7 +9,7 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
     read-only access for non-admin authenticated users.
     """
 
-    def has_permission(self, request, view):
+    def has_permission(self, request: Request, view: View) -> bool:
         return bool(
             (
                 request.method in SAFE_METHODS
