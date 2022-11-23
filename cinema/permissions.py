@@ -7,7 +7,7 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
     or is a read-only for non-admin users request.
     """
 
-    def has_permission(self, request, view):
+    def has_permission(self, request, view) -> bool:
         return bool(
             (
                 request.method in SAFE_METHODS
