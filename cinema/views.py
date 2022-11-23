@@ -1,10 +1,12 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
+from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
 
 from cinema.serializers import (
     GenreSerializer,
@@ -21,22 +23,37 @@ from cinema.serializers import (
 )
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
 class ActorViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
 
-class CinemaHallViewSet(viewsets.ModelViewSet):
+class CinemaHallViewSet(
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
 
-class MovieViewSet(viewsets.ModelViewSet):
+class MovieViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
     queryset = Movie.objects.all().prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
 
@@ -76,7 +93,11 @@ class MovieViewSet(viewsets.ModelViewSet):
         return MovieSerializer
 
 
-class MovieSessionViewSet(viewsets.ModelViewSet):
+class MovieSessionViewSet(
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
