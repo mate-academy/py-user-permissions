@@ -32,9 +32,9 @@ from cinema.serializers import (
 
 
 class GenreViewSet(
-    viewsets.GenericViewSet,
     mixins.ListModelMixin,
-    mixins.CreateModelMixin
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -43,9 +43,9 @@ class GenreViewSet(
 
 
 class ActorViewSet(
-    viewsets.GenericViewSet,
     mixins.ListModelMixin,
-    mixins.CreateModelMixin
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
@@ -54,9 +54,9 @@ class ActorViewSet(
 
 
 class CinemaHallViewSet(
-    viewsets.GenericViewSet,
     mixins.ListModelMixin,
-    mixins.CreateModelMixin
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
@@ -65,10 +65,10 @@ class CinemaHallViewSet(
 
 
 class MovieViewSet(
-    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = Movie.objects.all().prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
@@ -156,15 +156,17 @@ class OrderPagination(PageNumberPagination):
 
 
 class OrderViewSet(
-    viewsets.GenericViewSet,
     mixins.ListModelMixin,
-    mixins.CreateModelMixin
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet,
 ):
-    queryset = Order.objects.all().prefetch_related(
+    queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
+    authentication_classes = (TokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
@@ -177,11 +179,3 @@ class OrderViewSet(
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
-
-    def get_permissions(self):
-        if self.action == "create":
-            return [IsAuthenticated()]
-        return super().get_permissions()
