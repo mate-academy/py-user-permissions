@@ -67,11 +67,11 @@ class Order(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
 
-    def __str__(self):
-        return str(self.created_at)
-
     class Meta:
         ordering = ["-created_at"]
+
+    def __str__(self):
+        return str(self.created_at)
 
 
 class Ticket(models.Model):
@@ -84,6 +84,10 @@ class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
 
+    class Meta:
+        unique_together = ("movie_session", "row", "seat")
+        ordering = ["row", "seat"]
+
     @staticmethod
     def validate_ticket(row, seat, cinema_hall, error_to_raise):
         for ticket_attr_value, ticket_attr_name, cinema_hall_attr_name in [
@@ -94,7 +98,8 @@ class Ticket(models.Model):
             if not (1 <= ticket_attr_value <= count_attrs):
                 raise error_to_raise(
                     {
-                        ticket_attr_name: f"{ticket_attr_name} number must be in available range: "
+                        ticket_attr_name: f"{ticket_attr_name} number "
+                                          "must be in available range: "
                         f"(1, {cinema_hall_attr_name}): "
                         f"(1, {count_attrs})"
                     }
@@ -124,7 +129,3 @@ class Ticket(models.Model):
         return (
             f"{str(self.movie_session)} (row: {self.row}, seat: {self.seat})"
         )
-
-    class Meta:
-        unique_together = ("movie_session", "row", "seat")
-        ordering = ["row", "seat"]
