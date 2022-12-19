@@ -55,10 +55,6 @@ class CinemaHallViewSet(GenericViewSet,
     permission_classes = (IsAdminOrIfAuthenticatedReadOnlyListAndCreate,)
 
 
-def destroy(request, *args, **kwargs):
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
 class MovieListView(generics.ListCreateAPIView):
     queryset = Movie.objects.all().prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
@@ -102,9 +98,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
         .annotate(
-            tickets_available=F(
-                "cinema_hall__rows") * F(
-                "cinema_hall__seats_in_row")
+            tickets_available=F("cinema_hall__rows") * F("cinema_hall__seats_in_row")
             - Count("tickets")
         )
     )
