@@ -76,11 +76,9 @@ class Order(models.Model):
 
 class Ticket(models.Model):
     movie_session = models.ForeignKey(
-        MovieSession, on_delete=models.CASCADE, related_name="tickets"
-    )
+        MovieSession, on_delete=models.CASCADE, related_name="tickets")
     order = models.ForeignKey(
-        Order, on_delete=models.CASCADE, related_name="tickets"
-    )
+        Order, on_delete=models.CASCADE, related_name="tickets")
     row = models.IntegerField()
     seat = models.IntegerField()
 
@@ -94,7 +92,9 @@ class Ticket(models.Model):
             if not (1 <= ticket_attr_value <= count_attrs):
                 raise error_to_raise(
                     {
-                        ticket_attr_name: f"{ticket_attr_name} number must be in available range: "
+                        ticket_attr_name:
+                            f"{ticket_attr_name} "
+                            "number must be in available range: "
                         f"(1, {cinema_hall_attr_name}): "
                         f"(1, {count_attrs})"
                     }
