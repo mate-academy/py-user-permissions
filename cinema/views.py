@@ -21,7 +21,7 @@ from cinema.serializers import (
     OrderSerializer,
     OrderListSerializer,
 )
-from user.permissions import (
+from cinema.permissions import (
     IsAdminOrIfAuthenticatedReadOnly,
     OrderPostPermission
 )
