@@ -11,7 +11,6 @@ from user.tests.test_user_api import create_user
 
 ORDER_URL = reverse("cinema:order-list")
 
-
 def sample_order(user):
     return Order.objects.create(user=user)
 
@@ -69,7 +68,6 @@ class PrivateOrderApiTests(TestCase):
         sample_ticket(order)
 
         response = self.client.get(f"{ORDER_URL}1/")
-
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_put_order(self):

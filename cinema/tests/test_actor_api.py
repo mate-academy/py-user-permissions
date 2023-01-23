@@ -9,7 +9,7 @@ from cinema.serializers import ActorSerializer
 from user.tests.test_user_api import create_user
 
 ACTOR_URL = reverse("cinema:actor-list")
-
+print(ACTOR_URL)
 
 def sample_actor(**params):
     defaults = {

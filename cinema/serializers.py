@@ -1,5 +1,9 @@
+from urllib import response
+
+from django.contrib.auth import get_user_model
 from django.db import transaction
-from rest_framework import serializers
+# from requests import Response
+from rest_framework import serializers, status
 
 from cinema.models import (
     Genre,
