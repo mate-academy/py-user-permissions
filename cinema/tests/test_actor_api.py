@@ -11,7 +11,7 @@ from user.tests.test_user_api import create_user
 ACTOR_URL = reverse("cinema:actor-list")
 
 
-def sample_actor(**params):
+def sample_actor(**params) -> Actor:
     defaults = {
         "first_name": "test_name",
         "last_name": "test_last",
@@ -22,16 +22,16 @@ def sample_actor(**params):
 
 
 class PublicActorApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
 
-    def test_auth_required(self):
+    def test_auth_required(self) -> None:
         res = self.client.get(ACTOR_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateActorApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -40,7 +40,7 @@ class PrivateActorApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_get_actors(self):
+    def test_get_actors(self) -> None:
         sample_actor()
 
         response = self.client.get(ACTOR_URL)
@@ -51,7 +51,7 @@ class PrivateActorApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_post_actors(self):
+    def test_post_actors(self) -> None:
         payload = {
             "first_name": "test_name",
             "last_name": "test_last",
@@ -62,7 +62,7 @@ class PrivateActorApiTests(TestCase):
 
 
 class AdminActorApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -72,7 +72,7 @@ class AdminActorApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_post_actors(self):
+    def test_post_actors(self) -> None:
         payload = {
             "first_name": "test_name",
             "last_name": "test_last",
@@ -81,20 +81,20 @@ class AdminActorApiTests(TestCase):
         response = self.client.post(ACTOR_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_retrieve_actor(self):
+    def test_retrieve_actor(self) -> None:
         sample_actor()
 
         response = self.client.get(f"{ACTOR_URL}1/")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_put_actor(self):
+    def test_put_actor(self) -> None:
         sample_actor()
 
         response = self.client.put(f"{ACTOR_URL}1/", {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_delete_actor(self):
+    def test_delete_actor(self) -> None:
         sample_actor()
 
         response = self.client.delete(f"{ACTOR_URL}1/")

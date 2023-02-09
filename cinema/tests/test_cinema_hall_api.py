@@ -11,7 +11,7 @@ from cinema.serializers import CinemaHallSerializer
 CINEMA_HALL_URL = reverse("cinema:cinemahall-list")
 
 
-def sample_cinema_hall(**params):
+def sample_cinema_hall(**params) -> CinemaHall:
     defaults = {
         "name": "Blue",
         "rows": 15,
@@ -24,16 +24,16 @@ def sample_cinema_hall(**params):
 
 
 class PublicCinemaHallApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
 
-    def test_auth_required(self):
+    def test_auth_required(self) -> None:
         res = self.client.get(CINEMA_HALL_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateCinemaHallApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
         self.user = create_user(
             username="test_admin",
@@ -43,7 +43,7 @@ class PrivateCinemaHallApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_get_cinema_hall(self):
+    def test_get_cinema_hall(self) -> None:
         sample_cinema_hall()
 
         response = self.client.get(CINEMA_HALL_URL)
@@ -54,7 +54,7 @@ class PrivateCinemaHallApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_post_cinema_hall(self):
+    def test_post_cinema_hall(self) -> None:
         payload = {
             "name": "Blue",
             "rows": 15,
@@ -66,7 +66,7 @@ class PrivateCinemaHallApiTests(TestCase):
 
 
 class AdminCinemaHallApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -76,7 +76,7 @@ class AdminCinemaHallApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_post_cinema_hall(self):
+    def test_post_cinema_hall(self) -> None:
         payload = {
             "name": "Blue",
             "rows": 15,
@@ -86,19 +86,19 @@ class AdminCinemaHallApiTests(TestCase):
         response = self.client.post(CINEMA_HALL_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_retrieve_cinema_hall(self):
+    def test_retrieve_cinema_hall(self) -> None:
         sample_cinema_hall()
 
         response = self.client.get(f"{CINEMA_HALL_URL}1/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_put_cinema_hall(self):
+    def test_put_cinema_hall(self) -> None:
         sample_cinema_hall()
 
         response = self.client.put(f"{CINEMA_HALL_URL}1/", {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_delete_cinema_hall(self):
+    def test_delete_cinema_hall(self) -> None:
         sample_cinema_hall()
 
         response = self.client.delete(f"{CINEMA_HALL_URL}1/")

@@ -4,14 +4,18 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
-from cinema.models import Movie, Genre, Actor
+from cinema.models import (
+    Movie,
+    Genre,
+    Actor,
+)
 from user.tests.test_user_api import create_user
 from cinema.serializers import MovieDetailSerializer
 
 MOVIE_URL = reverse("cinema:movie-list")
 
 
-def sample_movie(**params):
+def sample_movie(**params) -> Movie:
     defaults = {
         "title": "Sample movie",
         "description": "Sample description",
@@ -22,21 +26,21 @@ def sample_movie(**params):
     return Movie.objects.create(**defaults)
 
 
-def detail_url(movie_id):
+def detail_url(movie_id) -> str:
     return reverse("cinema:movie-detail", args=[movie_id])
 
 
 class PublicMovieApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
 
-    def test_auth_required(self):
+    def test_auth_required(self) -> None:
         res = self.client.get(MOVIE_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateMovieApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -45,18 +49,16 @@ class PrivateMovieApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_get_movies(self):
+    def test_get_movies(self) -> None:
         sample_movie()
 
         response = self.client.get(MOVIE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_retrieve_movie(self):
+    def test_retrieve_movie(self) -> None:
         movie = sample_movie()
         movie.genres.add(Genre.objects.create(name="Genre"))
-        movie.actors.add(
-            Actor.objects.create(first_name="Actor", last_name="Last")
-        )
+        movie.actors.add(Actor.objects.create(first_name="Actor", last_name="Last"))
 
         url = detail_url(movie.id)
         response = self.client.get(url)
@@ -66,7 +68,7 @@ class PrivateMovieApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_post_movie(self):
+    def test_post_movie(self) -> None:
         payload = {
             "title": "Movie",
             "description": "Description",
@@ -78,7 +80,7 @@ class PrivateMovieApiTests(TestCase):
 
 
 class AdminMovieApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -88,7 +90,7 @@ class AdminMovieApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_post_movie(self):
+    def test_post_movie(self) -> None:
         genre = Genre.objects.create(name="Genre")
         actor = Actor.objects.create(first_name="Actor", last_name="Last")
         payload = {
@@ -102,7 +104,7 @@ class AdminMovieApiTests(TestCase):
         response = self.client.post(MOVIE_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_put_movie(self):
+    def test_put_movie(self) -> None:
         movie = sample_movie()
 
         url = detail_url(movie.id)
@@ -114,16 +116,12 @@ class AdminMovieApiTests(TestCase):
         }
 
         response = self.client.put(url, payload)
-        self.assertEqual(
-            response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED
-        )
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def test_delete_movie(self):
+    def test_delete_movie(self) -> None:
         movie = sample_movie()
 
         url = detail_url(movie.id)
         response = self.client.delete(url)
 
-        self.assertEqual(
-            response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED
-        )
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
