@@ -12,11 +12,11 @@ from user.tests.test_user_api import create_user
 ORDER_URL = reverse("cinema:order-list")
 
 
-def sample_order(user):
+def sample_order(user) -> Order:
     return Order.objects.create(user=user)
 
 
-def sample_ticket(order, **params):
+def sample_ticket(order, **params) -> Ticket:
     movie_session = sample_movie_session()
 
     defaults = {
@@ -32,16 +32,16 @@ def sample_ticket(order, **params):
 
 
 class PublicOrderApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
 
-    def test_auth_required(self):
+    def test_auth_required(self) -> None:
         res = self.client.get(ORDER_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateOrderApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -50,7 +50,7 @@ class PrivateOrderApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_get_order(self):
+    def test_get_order(self) -> None:
         order = sample_order(user=self.user)
 
         sample_ticket(order)
@@ -59,12 +59,12 @@ class PrivateOrderApiTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_post_order(self):
+    def test_post_order(self) -> None:
         response = self.client.post(ORDER_URL, {})
 
         self.assertNotEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_retrieve_order(self):
+    def test_retrieve_order(self) -> None:
         order = sample_order(user=self.user)
         sample_ticket(order)
 
@@ -72,7 +72,7 @@ class PrivateOrderApiTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_put_order(self):
+    def test_put_order(self) -> None:
         order = sample_order(user=self.user)
 
         sample_ticket(order)
@@ -80,7 +80,7 @@ class PrivateOrderApiTests(TestCase):
         response = self.client.put(f"{ORDER_URL}1/", {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_delete_order(self):
+    def test_delete_order(self) -> None:
         order = sample_order(user=self.user)
 
         sample_ticket(order)
@@ -90,7 +90,7 @@ class PrivateOrderApiTests(TestCase):
 
 
 class AdminOrderApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -100,7 +100,7 @@ class AdminOrderApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_get_order_when_admin_dont_have_order(self):
+    def test_get_order_when_admin_dont_have_order(self) -> None:
         user = get_user_model().objects.create_user(
             username="user",
             email="user@test.com",

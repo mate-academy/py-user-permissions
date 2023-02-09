@@ -17,7 +17,7 @@ from cinema.serializers import MovieSessionDetailSerializer
 MOVIE_SESSION_URL = reverse("cinema:moviesession-list")
 
 
-def sample_movie_session(**params):
+def sample_movie_session(**params) -> MovieSession:
     genres = sample_genres()
     actors = sample_actor()
     movie = sample_movie()
@@ -41,21 +41,21 @@ def sample_movie_session(**params):
     return MovieSession.objects.create(**defaults)
 
 
-def detail_url(movie_session_id):
+def detail_url(movie_session_id) -> str:
     return reverse("cinema:moviesession-detail", args=[movie_session_id])
 
 
 class PublicMovieSessionApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
 
-    def test_auth_required(self):
+    def test_auth_required(self) -> None:
         res = self.client.get(MOVIE_SESSION_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateMovieSessionApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -64,13 +64,13 @@ class PrivateMovieSessionApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_get_movie_sessions(self):
+    def test_get_movie_sessions(self) -> None:
         sample_movie_session()
 
         movie_sessions = self.client.get(MOVIE_SESSION_URL)
         self.assertEqual(movie_sessions.status_code, status.HTTP_200_OK)
 
-    def test_retrieve_movie_session(self):
+    def test_retrieve_movie_session(self) -> None:
         movie_session = sample_movie_session()
 
         url = detail_url(movie_session.id)
@@ -81,11 +81,11 @@ class PrivateMovieSessionApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_post_movie_session(self):
+    def test_post_movie_session(self) -> None:
         response = self.client.post(MOVIE_SESSION_URL, {})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_put_movie_session(self):
+    def test_put_movie_session(self) -> None:
         movie_session = sample_movie_session()
 
         url = detail_url(movie_session.id)
@@ -93,7 +93,7 @@ class PrivateMovieSessionApiTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_delete_movie_session(self):
+    def test_delete_movie_session(self) -> None:
         movie_session = sample_movie_session()
 
         url = detail_url(movie_session.id)
@@ -103,7 +103,7 @@ class PrivateMovieSessionApiTests(TestCase):
 
 
 class AdminMovieSessionApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -113,7 +113,7 @@ class AdminMovieSessionApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_post_movie_session(self):
+    def test_post_movie_session(self) -> None:
         genres = sample_genres()
         actors = sample_actor()
         movie = sample_movie()
@@ -136,7 +136,7 @@ class AdminMovieSessionApiTests(TestCase):
         response = self.client.post(MOVIE_SESSION_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_put_movie_session(self):
+    def test_put_movie_session(self) -> None:
         movie_session = sample_movie_session()
 
         movie = Movie.objects.get(pk=1)
@@ -157,7 +157,7 @@ class AdminMovieSessionApiTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_delete_movie_session(self):
+    def test_delete_movie_session(self) -> None:
         movie_session = sample_movie_session()
 
         url = detail_url(movie_session.id)

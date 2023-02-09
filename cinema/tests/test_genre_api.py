@@ -11,7 +11,7 @@ from cinema.serializers import GenreSerializer
 GENRE_URL = reverse("cinema:genre-list")
 
 
-def sample_genres(**params):
+def sample_genres(**params) -> Genre:
     defaults = {"name": "Poem"}
     defaults.update(params)
 
@@ -19,16 +19,16 @@ def sample_genres(**params):
 
 
 class PublicGenresApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
 
-    def test_auth_required(self):
+    def test_auth_required(self) -> None:
         res = self.client.get(GENRE_URL)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class PrivateGenreApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -37,7 +37,7 @@ class PrivateGenreApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_list_genres(self):
+    def test_list_genres(self) -> None:
         sample_genres()
 
         response = self.client.get(GENRE_URL)
@@ -48,7 +48,7 @@ class PrivateGenreApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
-    def test_post_genres(self):
+    def test_post_genres(self) -> None:
         payload = {"name": "Name"}
 
         response = self.client.post(GENRE_URL, payload)
@@ -56,7 +56,7 @@ class PrivateGenreApiTests(TestCase):
 
 
 class AdminGenreApiTests(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = create_user(
             username="test_admin",
             email="test@test.com",
@@ -66,27 +66,27 @@ class AdminGenreApiTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_post_genres(self):
+    def test_post_genres(self) -> None:
         payload = {"name": "Name"}
 
         response = self.client.post(GENRE_URL, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_retrieve_genre(self):
+    def test_retrieve_genre(self) -> None:
         sample_genres()
 
         response = self.client.get(f"{GENRE_URL}1/")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_put_genre(self):
+    def test_put_genre(self) -> None:
         sample_genres()
 
         response = self.client.put(f"{GENRE_URL}1/", {})
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_delete_genre(self):
+    def test_delete_genre(self) -> None:
         sample_genres()
 
         response = self.client.delete(f"{GENRE_URL}1/")

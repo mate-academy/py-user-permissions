@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.db.models import F, Count
+from django.db.models import F, Count, QuerySet
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
@@ -77,11 +77,11 @@ class MovieViewSet(
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
 
     @staticmethod
-    def _params_to_ints(qs):
+    def _params_to_ints(qs) -> list[int]:
         """Converts a list of string IDs to a list of integers"""
         return [int(str_id) for str_id in qs.split(",")]
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         """Retrieve the movies with filters"""
         title = self.request.query_params.get("title")
         genres = self.request.query_params.get("genres")
@@ -126,7 +126,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         date = self.request.query_params.get("date")
         movie_id_str = self.request.query_params.get("movie")
 
@@ -169,7 +169,7 @@ class OrderViewSet(
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         return Order.objects.filter(user=self.request.user)
 
     def get_serializer_class(self):
@@ -178,5 +178,5 @@ class OrderViewSet(
 
         return OrderSerializer
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer) -> None:
         serializer.save(user=self.request.user)
