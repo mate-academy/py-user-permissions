@@ -19,7 +19,7 @@ At this part of the task, we will do authorization by using tokens. The function
 
 
 Example:
-```python
+```
 HTTP 200 OK
 Allow: GET, PUT, PATCH, HEAD, OPTIONS
 Content-Type: application/json
