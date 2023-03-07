@@ -34,7 +34,7 @@ class Actor(models.Model):
 
     @property
     def full_name(self) -> str:
-        return self.first_name + " " + self.last_name
+        return f"{self.first_name} {self.last_name}"
 
 
 class Movie(models.Model):
