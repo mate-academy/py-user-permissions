@@ -4,6 +4,7 @@ from typing import Type
 from django.db.models import F, Count, QuerySet
 from rest_framework import viewsets, mixins
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.serializers import Serializer
 
 from cinema.models import (
@@ -149,11 +150,16 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
     pagination_class = OrderPagination
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self) -> QuerySet[Order]:
         return Order.objects.filter(user=self.request.user)
