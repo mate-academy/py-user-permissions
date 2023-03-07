@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Type
 
 from django.db.models import F, Count, QuerySet
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.serializers import Serializer
 
@@ -23,17 +23,29 @@ from cinema.serializers import (
 )
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
-class ActorViewSet(viewsets.ModelViewSet):
+class ActorViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
 
-class CinemaHallViewSet(viewsets.ModelViewSet):
+class CinemaHallViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
