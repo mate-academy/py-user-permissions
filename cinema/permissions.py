@@ -1,8 +1,10 @@
+from django.http import HttpRequest
+from django.views import View
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
 class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
-    def has_permission(self, request, view):
+    def has_permission(self, request: HttpRequest, view: View) -> bool:
         """
         The request is authenticated as an admin user,
         or is a read-only request for non-admin users.
