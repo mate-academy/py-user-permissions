@@ -140,14 +140,14 @@ class OrderPagination(PageNumberPagination):
 class OrderViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
-    GenericViewSet
+    viewsets.GenericViewSet
 ):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self) -> QuerySet[Order]:
         return Order.objects.filter(user=self.request.user)
