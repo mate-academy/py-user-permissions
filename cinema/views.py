@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework.pagination import PageNumberPagination
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
@@ -19,6 +19,7 @@ from cinema.serializers import (
     OrderSerializer,
     OrderListSerializer,
 )
+from user.serializers import UserSerializer
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -136,3 +137,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class CreateUserView(generics.CreateAPIView):
+    serializer_class = UserSerializer
