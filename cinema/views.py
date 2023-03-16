@@ -2,8 +2,10 @@ from datetime import datetime
 
 from django.db.models import F, Count
 from rest_framework import viewsets, generics
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.settings import api_settings
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
@@ -21,6 +23,7 @@ from cinema.serializers import (
     OrderSerializer,
     OrderListSerializer,
 )
+from user.models import User
 from user.serializers import UserSerializer
 
 
@@ -147,3 +150,12 @@ class CreateUserView(generics.CreateAPIView):
 
 class CreateTokenView(ObtainAuthToken):
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+
+class ManageUserView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self) -> User:
+        return self.request.user
