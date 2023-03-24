@@ -1,5 +1,6 @@
 from django.db import transaction
 from rest_framework import serializers
+from typing import Any
 
 from cinema.models import (
     Genre,
@@ -124,7 +125,7 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ("id", "tickets", "created_at")
 
-    def create(self, validated_data):
+    def create(self, validated_data) -> Any:
         with transaction.atomic():
             tickets_data = validated_data.pop("tickets")
             order = Order.objects.create(**validated_data)
