@@ -33,7 +33,8 @@ class PublicUserApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         user = get_user_model().objects.get(**res.data)
-        self.assertTrue(user.check_password(payload["password"]))
+        print(type(user))
+        self.assertTuse(user.check_password(payload["username"]))
         self.assertNotIn("password", res.data)
 
     def test_user_exists(self):
