@@ -7,6 +7,7 @@ Read [the guideline](https://github.com/mate-academy/py-task-guideline/blob/main
 - After loading data from fixture you can use following superuser (or create another one by yourself):
   - Login: `admin.user`
   - Password: `1qazcde3`
+  - token: `3011b6a92a2627e6f3e3c45a13e783be4cdfc51a`
 
 ### In this task you will add the functionality of token authentication
 
