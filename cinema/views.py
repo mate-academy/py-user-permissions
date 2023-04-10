@@ -34,12 +34,6 @@ class GenreViewSet(
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-    # def get_permissions(self):
-    #     if self.action == "create":
-    #         return [IsAdminUser()]
-    #
-    #     return super().get_permissions()
-
 
 class ActorViewSet(
     mixins.ListModelMixin,
