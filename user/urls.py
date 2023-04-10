@@ -1,8 +1,7 @@
 from django.urls import path
 
-from rest_framework.authtoken import views
-
 from user.views import CreateUserView, CreateTokenView, ManageUserView
+
 
 urlpatterns = [
     path("register/", CreateUserView.as_view(), name="create"),
