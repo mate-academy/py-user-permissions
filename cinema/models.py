@@ -85,7 +85,12 @@ class Ticket(models.Model):
     seat = models.IntegerField()
 
     @staticmethod
-    def validate_ticket(row: int, seat: int, cinema_hall: CinemaHall, error_to_raise) -> None:
+    def validate_ticket(
+            row: int,
+            seat: int,
+            cinema_hall: CinemaHall,
+            error_to_raise
+    ) -> None:
         for ticket_attr_value, ticket_attr_name, cinema_hall_attr_name in [
             (row, "row", "rows"),
             (seat, "seat", "seats_in_row"),
