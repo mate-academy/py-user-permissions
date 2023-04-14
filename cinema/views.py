@@ -31,7 +31,7 @@ from cinema.serializers import (
     OrderSerializer,
     OrderListSerializer,
 )
-from user.permissions import IsAdminOrIfAuthenticatedReadOnly
+from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
 
 
 class GenreViewSet(
