@@ -1,10 +1,5 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-SAFE_LIST = (
-    "list",
-    "create",
-)
-
 
 class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
     """

@@ -135,6 +135,7 @@ class OrderPagination(PageNumberPagination):
 
 class OrderViewSet(generics.ListCreateAPIView, viewsets.GenericViewSet):
     authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
@@ -151,10 +152,3 @@ class OrderViewSet(generics.ListCreateAPIView, viewsets.GenericViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-    def get_permissions(self):
-        if self.action == "create":
-            self.permission_classes = (IsAuthenticated,)
-        else:
-            self.permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-        return [permission() for permission in self.permission_classes]
