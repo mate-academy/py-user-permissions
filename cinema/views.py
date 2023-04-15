@@ -139,7 +139,6 @@ class OrderViewSet(generics.ListCreateAPIView, viewsets.GenericViewSet):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
-    serializer_class = OrderListSerializer
     pagination_class = OrderPagination
 
     def get_queryset(self):
