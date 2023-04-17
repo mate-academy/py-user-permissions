@@ -63,7 +63,7 @@ class MovieViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin
 ):
-    queryset = Movie.objects.all().prefetch_related("genres", "actors")
+    queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
@@ -106,7 +106,7 @@ class MovieViewSet(
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
     queryset = (
-        MovieSession.objects.all()
+        MovieSession.objects
         .select_related("movie", "cinema_hall")
         .annotate(
             tickets_available=F("cinema_hall__rows")
