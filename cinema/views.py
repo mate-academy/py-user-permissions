@@ -4,6 +4,7 @@ from django.db.models import F, Count
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 
 from cinema.models import (
     Genre,
@@ -73,12 +74,6 @@ class MovieViewSet(
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-
-    def get_permissions(self):
-        if self.action in ["list", "create", "retrieve"]:
-            return super().get_permissions()
-        else:
-            return [IsAdminOrIfAuthenticatedReadOnly()]
 
     @staticmethod
     def _params_to_ints(qs):
@@ -166,17 +161,12 @@ class OrderViewSet(
     viewsets.GenericViewSet
 ):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    permission_classes = (IsAuthenticated,)
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-
-    def get_permissions(self):
-        if self.action == "create":
-            return [permissions.IsAuthenticated()]
-        return super().get_permissions()
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
