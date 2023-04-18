@@ -104,14 +104,7 @@ class MovieViewSet(
         return MovieSerializer
 
 
-class MovieSessionViewSet(
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.CreateModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
+class MovieSessionViewSet(viewsets.ModelViewSet):
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
@@ -124,12 +117,6 @@ class MovieSessionViewSet(
     serializer_class = MovieSessionSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-
-    def get_permissions(self):
-        if self.action in ("create", "update", "partial_update", "destroy"):
-            return [IsAdminUser()]
-
-        return super().get_permissions()
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
