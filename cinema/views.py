@@ -1,9 +1,10 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
@@ -29,12 +30,25 @@ class GenreViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
+    def get_permissions(self):
+        if self.action == "list" or self.action == "create":
+            self.permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+        return super(GenreViewSet, self).get_permissions()
+
 
 class ActorViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    permission_classes = []
+
+    def get_permissions(self):
+        if self.action == "list" or self.action == "create":
+            self.permission_classes = []
+        return super(ActorViewSet, self).get_permissions()
+
+    def list(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class CinemaHallViewSet(viewsets.ModelViewSet):
@@ -43,12 +57,24 @@ class CinemaHallViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
+    def get_permissions(self):
+        if self.action == "list" or self.action == "create":
+            self.permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+        return super(CinemaHallViewSet, self).get_permissions()
+
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+    def get_permissions(self):
+        if self.action == (
+                "list" or self.action == "create" or self.action == "retrieve"
+        ):
+            self.permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+        return super(MovieViewSet, self).get_permissions()
 
     @staticmethod
     def _params_to_ints(qs):
@@ -124,6 +150,15 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
 
         return MovieSessionSerializer
 
+    def get_permissions(self):
+        if self.action == (
+                "list" or self.action == "retrieve"
+                or self.action == "create" or self.action == "update"
+                or self.action == "partial_update" or self.action == "destroy"
+        ):
+            self.permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+        return super(MovieSessionViewSet, self).get_permissions()
+
 
 class OrderPagination(PageNumberPagination):
     page_size = 10
@@ -132,7 +167,8 @@ class OrderPagination(PageNumberPagination):
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.prefetch_related(
-        "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
+        "tickets__movie_session__movie",
+        "tickets__movie_session__cinema_hall"
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
@@ -147,6 +183,11 @@ class OrderViewSet(viewsets.ModelViewSet):
             return OrderListSerializer
 
         return OrderSerializer
+
+    def get_permissions(self):
+        if self.action == "list" or self.action == "create":
+            self.permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+        return super(OrderViewSet, self).get_permissions()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
