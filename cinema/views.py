@@ -129,29 +129,34 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.prefetch_related(
-        "tickets__movie_session__movie",
-        "tickets__movie_session__cinema_hall"
-    )
-    serializer_class = OrderSerializer
-    pagination_class = OrderPagination
+class OrderViewSet(viewsets.ViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-    def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+    def list(self, request):
+        orders = Order.objects.filter(user=request.user)
+        serializer = OrderListSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def get_serializer_class(self):
-        if self.action == "list":
-            return OrderListSerializer
+    def retrieve(self, request, pk=None):
+        try:
+            order = Order.objects.get(pk=pk, user=request.user)
+            serializer = OrderSerializer(order)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Order.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-        return OrderSerializer
+    def create(self, request):
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_permissions(self):
-        if self.action == "list" or self.action == "create":
-            self.permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-        return super(OrderViewSet, self).get_permissions()
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def destroy(self, request, pk=None):
+        try:
+            order = Order.objects.get(pk=pk, user=request.user)
+            order.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Order.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
