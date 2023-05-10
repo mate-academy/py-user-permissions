@@ -166,7 +166,9 @@ class OrderPagination(PageNumberPagination):
 
 class OrderViewSet(viewsets.ViewSet):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly | IsAuthenticatedOrReadOnly,)
+    permission_classes = (
+        IsAdminOrIfAuthenticatedReadOnly | IsAuthenticatedOrReadOnly,
+    )
 
     def list(self, request):
 
