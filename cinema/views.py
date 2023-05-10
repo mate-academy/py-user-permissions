@@ -109,6 +109,7 @@ class MovieSessionViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def create(self, request):
+
         serializer = MovieSessionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -116,6 +117,7 @@ class MovieSessionViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk=None):
+
         movie_session = MovieSession.objects.get(pk=pk)
         serializer = MovieSessionSerializer(movie_session, data=request.data)
         if serializer.is_valid():
