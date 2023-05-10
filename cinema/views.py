@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
@@ -129,9 +130,12 @@ class OrderViewSet(viewsets.ViewSet):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def list(self, request):
-        orders = Order.objects.filter(user=request.user)
-        serializer = OrderListSerializer(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            orders = Order.objects.filter(user=self.request.user)
+            serializer = OrderListSerializer(orders, many=True)
+            return Response({"count": len(serializer.data), "results": serializer.data})
+        except ObjectDoesNotExist:
+            return Response({"count": 0, "results": []}, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
         try:
