@@ -119,6 +119,36 @@ class MovieSessionViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def update(self, request, pk=None):
+        try:
+            movie_session = MovieSession.objects.get(pk=pk)
+            serializer = MovieSessionSerializer(
+                movie_session, data=request.data
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+        except MovieSession.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def partial_update(self, request, pk=None):
+        try:
+            movie_session = MovieSession.objects.get(pk=pk)
+            serializer = MovieSessionSerializer(
+                movie_session, data=request.data, partial=True
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
+        except MovieSession.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
     def destroy(self, request, pk=None):
         try:
             movie_session = MovieSession.objects.get(pk=pk)
