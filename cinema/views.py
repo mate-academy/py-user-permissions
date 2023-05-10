@@ -1,10 +1,11 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
@@ -36,19 +37,22 @@ class GenreViewSet(viewsets.ModelViewSet):
         return super(GenreViewSet, self).get_permissions()
 
 
-class ActorViewSet(viewsets.ModelViewSet):
-    queryset = Actor.objects.all()
-    serializer_class = ActorSerializer
+class ActorViewSet(viewsets.ViewSet):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = []
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-    def get_permissions(self):
-        if self.action == "list" or self.action == "create":
-            self.permission_classes = []
-        return super(ActorViewSet, self).get_permissions()
+    def list(self, request):
+        queryset = Actor.objects.all()
+        serializer = ActorSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def list(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    def create(self, request):
+        serializer = ActorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class CinemaHallViewSet(viewsets.ModelViewSet):
