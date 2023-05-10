@@ -127,6 +127,7 @@ class MovieSessionViewSet(viewsets.ViewSet):
         except MovieSession.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+
 class OrderPagination(PageNumberPagination):
     page_size = 10
     max_page_size = 100
