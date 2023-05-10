@@ -150,6 +150,7 @@ class MovieSessionViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     def destroy(self, request, pk=None):
+
         try:
             movie_session = MovieSession.objects.get(pk=pk)
             movie_session.delete()
