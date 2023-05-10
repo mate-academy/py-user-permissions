@@ -168,6 +168,7 @@ class OrderViewSet(viewsets.ViewSet):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def list(self, request):
+
         try:
             orders = Order.objects.filter(user=self.request.user)
             serializer = OrderListSerializer(orders, many=True)
