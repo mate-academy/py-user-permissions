@@ -119,14 +119,13 @@ class MovieSessionViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk=None):
+    def destroy(self, request, pk=None):
         try:
             movie_session = MovieSession.objects.get(pk=pk)
             movie_session.delete()
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except MovieSession.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
 
 class OrderPagination(PageNumberPagination):
     page_size = 10
