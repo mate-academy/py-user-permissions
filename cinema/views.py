@@ -179,25 +179,9 @@ class OrderViewSet(viewsets.ViewSet):
                 {"count": 0, "results": []}, status=status.HTTP_200_OK
             )
 
-    def retrieve(self, request, pk=None):
-        try:
-            order = Order.objects.get(pk=pk, user=request.user)
-            serializer = OrderSerializer(order)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Order.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
     def create(self, request):
         serializer = OrderSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def destroy(self, request, pk=None):
-        try:
-            order = Order.objects.get(pk=pk, user=request.user)
-            order.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Order.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
