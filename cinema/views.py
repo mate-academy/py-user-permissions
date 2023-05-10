@@ -133,9 +133,13 @@ class OrderViewSet(viewsets.ViewSet):
         try:
             orders = Order.objects.filter(user=self.request.user)
             serializer = OrderListSerializer(orders, many=True)
-            return Response({"count": len(serializer.data), "results": serializer.data})
+            return Response(
+                {"count": len(serializer.data), "results": serializer.data}
+            )
         except ObjectDoesNotExist:
-            return Response({"count": 0, "results": []}, status=status.HTTP_200_OK)
+            return Response(
+                {"count": 0, "results": []}, status=status.HTTP_200_OK
+            )
 
     def retrieve(self, request, pk=None):
         try:
