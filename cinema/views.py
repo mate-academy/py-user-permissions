@@ -123,7 +123,7 @@ class MovieSessionViewSet(viewsets.ViewSet):
         try:
             movie_session = MovieSession.objects.get(pk=pk)
             movie_session.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         except MovieSession.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
