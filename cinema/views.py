@@ -1,8 +1,7 @@
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
@@ -166,7 +165,7 @@ class OrderPagination(PageNumberPagination):
 
 class OrderViewSet(viewsets.ViewSet):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    permission_classes = (IsAuthenticated, )
 
     def list(self, request):
         orders = Order.objects.filter(user=self.request.user)
