@@ -21,6 +21,7 @@ urlpatterns = [
     path("genres/", GenreViewSet.as_view(), name="genre-list"),
     path("actors/", ActorViewSet.as_view(), name="actor-list"),
     path("cinema_halls/", CinemaHallViewSet.as_view(), name="cinemahall-list"),
+
 ] + router.urls
 
 
