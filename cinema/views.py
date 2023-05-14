@@ -5,7 +5,7 @@ from django.db.models import F, Count
 from rest_framework import viewsets, generics
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import MethodNotAllowed, NotFound
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
