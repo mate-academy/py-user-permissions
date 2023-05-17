@@ -1,4 +1,6 @@
 from datetime import datetime
+from typing import Type
+
 from rest_framework import serializers
 from django.db.models import F, Count, QuerySet
 from rest_framework import viewsets, mixins
@@ -95,7 +97,7 @@ class MovieViewSet(
 
         return queryset.distinct()
 
-    def get_serializer_class(self) -> type[serializers.Serializer]:
+    def get_serializer_class(self) -> Type[serializers.Serializer]:
         if self.action == "list":
             return MovieListSerializer
 
@@ -138,7 +140,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
 
         return queryset
 
-    def get_serializer_class(self) -> type[serializers.Serializer]:
+    def get_serializer_class(self) -> Type[serializers.Serializer]:
         if self.action == "list":
             return MovieSessionListSerializer
 
@@ -169,7 +171,7 @@ class OrderViewSet(
     def get_queryset(self) -> QuerySet:
         return Order.objects.filter(user=self.request.user)
 
-    def get_serializer_class(self) -> type[serializers.Serializer]:
+    def get_serializer_class(self) -> Type[serializers.Serializer]:
         if self.action == "list":
             return OrderListSerializer
 
