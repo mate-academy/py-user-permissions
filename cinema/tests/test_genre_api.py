@@ -75,19 +75,19 @@ class AdminGenreApiTests(TestCase):
     def test_retrieve_genre(self):
         sample_genres()
 
-        response = self.client.get(f"{GENRE_URL}1/")
+        response = self.client.get(f"{GENRE_URL}/1/")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_put_genre(self):
         sample_genres()
 
-        response = self.client.put(f"{GENRE_URL}1/", {})
+        response = self.client.put(f"{GENRE_URL}/1/", {})
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_genre(self):
         sample_genres()
 
-        response = self.client.delete(f"{GENRE_URL}1/")
+        response = self.client.delete(f"{GENRE_URL}/1/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
