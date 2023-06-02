@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import MethodNotAllowed, NotFound
 from rest_framework.pagination import PageNumberPagination
@@ -46,7 +46,12 @@ class CinemaHallViewSet(generics.ListCreateAPIView):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-class MovieViewSet(viewsets.ModelViewSet):
+class MovieViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
@@ -86,11 +91,6 @@ class MovieViewSet(viewsets.ModelViewSet):
             return MovieDetailSerializer
 
         return MovieSerializer
-
-    def get_permissions(self):
-        if self.action not in ("list", "create", "retrieve"):
-            raise MethodNotAllowed(self.action)
-        return super().get_permissions()
 
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
@@ -137,7 +137,11 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
@@ -157,8 +161,3 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-    def get_permissions(self):
-        if self.action not in ("list", "create"):
-            raise NotFound
-        return super().get_permissions()
