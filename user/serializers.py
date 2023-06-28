@@ -8,7 +8,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ("id", "username", "email", "password", "is_staff")
         read_only_fields = ("id", "is_staff")
-        # Changes the behaviour of fields (in this case write only for password)
+        # Changes the behaviour of fields
+        # (in this case write only for password)
         extra_kwargs = {
             "password": {"write_only": True, "min_length": 5}
         }
@@ -26,7 +27,8 @@ class UserSerializer(serializers.ModelSerializer):
         Update user with correctly encrypted password
         """
         password = validated_data.pop("password", None)
-        user = super().update(instance, validated_data)  # validated data without password
+        user = super().update(instance, validated_data)
+        # validated data without password
 
         if password:
             user.set_password(password)
