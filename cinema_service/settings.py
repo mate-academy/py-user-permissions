@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 
+
+import cinema.permissions
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -115,6 +118,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = "user.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication"
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "cinema.permissions.IsAdminOrIfAuthenticatedReadOnly"
+    ]
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
