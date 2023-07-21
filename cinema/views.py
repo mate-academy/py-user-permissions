@@ -101,11 +101,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
     )
     serializer_class = MovieSessionSerializer
 
-    def get_permissions(self):
-        if self.action not in ("list", "create", "retrieve"):
-            return [IsAdminUser()]
-        return super().get_permissions()
-
     def get_queryset(self):
         date = self.request.query_params.get("date")
         movie_id_str = self.request.query_params.get("movie")
