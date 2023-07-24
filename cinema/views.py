@@ -1,11 +1,10 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from django.http import Http404
 from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
@@ -183,11 +182,6 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-    # def get_permissions(self):
-    #     if self.action in ("update", "partial_update", "retrieve", "delete"):
-    #         return [IsAdminUser()]
-    #     return super().get_permissions()
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
