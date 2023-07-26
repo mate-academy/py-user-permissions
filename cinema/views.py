@@ -25,52 +25,37 @@ from cinema.serializers import (
 )
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class ListCreateModelViewSet(viewsets.ModelViewSet):
+
+    def update(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class GenreViewSet(ListCreateModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
 
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def destroy(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def retrieve(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-
-class ActorViewSet(viewsets.ModelViewSet):
+class ActorViewSet(ListCreateModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
 
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def destroy(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def retrieve(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-
-class CinemaHallViewSet(viewsets.ModelViewSet):
+class CinemaHallViewSet(ListCreateModelViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
-
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def destroy(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def retrieve(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class MovieViewSet(viewsets.ModelViewSet):
@@ -165,7 +150,7 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(ListCreateModelViewSet):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
@@ -173,15 +158,6 @@ class OrderViewSet(viewsets.ModelViewSet):
     pagination_class = OrderPagination
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAuthenticated, )
-
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def destroy(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def retrieve(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
