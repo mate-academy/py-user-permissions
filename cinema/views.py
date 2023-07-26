@@ -192,7 +192,5 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.action == "create":
             return OrderSerializer
 
-        return Response()
-
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
