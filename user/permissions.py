@@ -4,7 +4,7 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
     def has_permission(self, request, view):
-        if request.method in ("GET", "PUT", "PATCH", "HEAD", "OPTIONS"):
+        if request.method in SAFE_METHODS + ("PUT", "PATCH"):
             return bool(request.user and request.user.is_authenticated)
         else:
             raise MethodNotAllowed(request.method)
