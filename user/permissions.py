@@ -20,7 +20,7 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
         )
 
     def has_object_permission(self, request, view, obj):
-        raise NotFound(f"Not enough permission")
+        raise NotFound("Not enough permission")
 
 
 class MovieSessionReadWritePermissions(
@@ -47,8 +47,8 @@ class MoviePermissions(
             raise MethodNotAllowed(request.method)
 
         return request.user and (
-                request.user.is_staff
-                or request.user.is_authenticated
+            request.user.is_staff
+            or request.user.is_authenticated
         )
 
 
