@@ -79,7 +79,7 @@ class MovieViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "create", "retrieve"):
             permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
         else:
-            raise MethodNotAllowed(method=self.action)
+            raise MethodNotAllowed(method=self.request.method)
         return [permission() for permission in permission_classes]
 
     @staticmethod
