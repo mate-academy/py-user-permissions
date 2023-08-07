@@ -59,7 +59,6 @@ class MovieViewSet(
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
 
-
     @staticmethod
     def _params_to_ints(qs):
         """Converts a list of string IDs to a list of integers"""
