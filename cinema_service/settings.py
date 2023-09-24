@@ -101,20 +101,32 @@ AUTH_PASSWORD_VALIDATORS = [
         "UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-        "MinimumLengthValidator",
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-        "CommonPasswordValidator",
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-        "NumericPasswordValidator",
+        "NAME":
+            "django.contrib.auth.password_validation."
+            "NumericPasswordValidator",
     },
 ]
 
 AUTH_USER_MODEL = "user.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "cinema.permissions.IsAdminOrIfAuthenticatedReadOnly",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
