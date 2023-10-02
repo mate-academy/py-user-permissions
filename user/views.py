@@ -10,4 +10,4 @@ class UserCreateView(generics.CreateAPIView):
 
 
 class CreateTokenView(ObtainAuthToken):
-    parser_classes = (api_settings.DEFAULT_RENDERER_CLASSES,)
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
