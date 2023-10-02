@@ -10,7 +10,7 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
                 and request.user.is_authenticated
 
             ) or (
-                request.user and request.user.is_active
+                request.user and request.user.is_staff
             )
         )
 
