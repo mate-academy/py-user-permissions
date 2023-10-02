@@ -1,14 +1,16 @@
 from rest_framework import generics
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .serializers import UserSerializer
 
 
 class UserCreateView(generics.CreateAPIView):
     serializer_class = UserSerializer
+    authentication_classes = (BasicAuthentication,)
+    permission_classes = (AllowAny,)
 
 
 class CreateTokenView(ObtainAuthToken):
