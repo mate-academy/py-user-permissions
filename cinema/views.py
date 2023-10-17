@@ -9,13 +9,11 @@ from rest_framework.mixins import (
     RetrieveModelMixin
 )
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-from cinema.permissions import (
-    IsAdminOrIfAuthenticatedReadOnly,
-    IsAdminOrIfAuthenticatedReadAndCreate
-)
+from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
 
 from cinema.serializers import (
     GenreSerializer,
@@ -151,7 +149,7 @@ class OrderViewSet(CreateModelMixin, ListModelMixin, GenericViewSet):
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
     authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAdminOrIfAuthenticatedReadAndCreate, )
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
