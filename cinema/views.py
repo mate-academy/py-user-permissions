@@ -166,13 +166,7 @@ class OrderViewSet(
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
     authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
-
-    def get_permissions(self):
-        if self.action == "create":
-            return [IsAuthenticated()]
-
-        return super().get_permissions()
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
@@ -181,7 +175,7 @@ class OrderViewSet(
         if self.action == "list":
             return OrderListSerializer
 
-        return OrderSerializer
+        return self.serializer_class
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
