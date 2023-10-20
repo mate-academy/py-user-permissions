@@ -6,8 +6,6 @@ from rest_framework import viewsets, mixins
 
 from rest_framework.authentication import TokenAuthentication
 
-from rest_framework.generics import get_object_or_404
-
 from rest_framework.pagination import PageNumberPagination
 
 from rest_framework.permissions import IsAuthenticated
@@ -15,7 +13,6 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 
 from .permissions import IsAdminOrIfAuthenticatedReadOnly
-
 
 from cinema.serializers import (
     GenreSerializer,
@@ -75,11 +72,6 @@ class MovieViewSet(
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication, )
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
-
-    def get_object(self):
-        obj = get_object_or_404(self.get_queryset(), pk=self.kwargs["pk"])
-        self.check_object_permissions(self.request, obj)
-        return obj
 
     @staticmethod
     def _params_to_ints(qs):
@@ -172,7 +164,7 @@ class OrderViewSet(
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
     authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
@@ -184,8 +176,3 @@ class OrderViewSet(
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-    def get_permissions(self):
-        if self.action in ("create", ):
-            return [IsAuthenticated()]
-        return super().get_permissions()
