@@ -8,3 +8,5 @@ exclude =
     **migrations
     venv
     tests
+    settings.py
+    views.py
