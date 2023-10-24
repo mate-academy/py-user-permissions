@@ -9,4 +9,3 @@ exclude =
     venv
     tests
     settings.py
-    views.py
