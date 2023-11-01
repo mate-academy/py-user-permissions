@@ -1,8 +1,9 @@
-from django.urls import path, include
-from user.views import CreateUserView
+from django.urls import path
+from user.views import CreateUserView, CreateTokenView
 
 urlpatterns = [
-    path("register/", CreateUserView.as_view(), name="register")
+    path("register/", CreateUserView.as_view(), name="register"),
+    path("login/", CreateTokenView.as_view()),
 ]
 
 app_name = "user"
