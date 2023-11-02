@@ -46,11 +46,6 @@ class ActorViewSet(
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
 
-    def get_permissions(self):
-        if self.action in ("update", "partial_update", "destroy"):
-            return [IsAdminUser()]
-        return super().get_permissions()
-
 
 class CinemaHallViewSet(
     mixins.CreateModelMixin,
@@ -109,11 +104,6 @@ class MovieViewSet(
 
         return MovieSerializer
 
-    def get_permissions(self):
-        if self.action in ("update", "partial_update", "destroy"):
-            return [IsAdminUser()]
-        return super().get_permissions()
-
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
     queryset = (
@@ -152,11 +142,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
             return MovieSessionDetailSerializer
 
         return MovieSessionSerializer
-
-    def get_permissions(self):
-        if self.action in ("update", "partial_update", "destroy"):
-            return [IsAdminUser()]
-        return super().get_permissions()
 
 
 class OrderPagination(PageNumberPagination):
