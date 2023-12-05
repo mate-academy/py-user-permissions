@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from django.db import transaction
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,9 +14,13 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return get_user_model().objects.create_user(**validated_data)
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         password = validated_data.pop("password", None)
-        user = super().update(instance, validated_data)
+        user = get_user_model().objects.select_for_update().get(pk=instance.pk)
+        for attr, value in validated_data.items():
+            setattr(user, attr, value)
+        user.save()
 
         if password:
             user.set_password(password)
