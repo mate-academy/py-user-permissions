@@ -123,8 +123,7 @@ class Ticket(models.Model):
         )
 
     def __str__(self):
-        return f"{str(self.movie_session)}" f" " \
-               f"(row: {self.row}, seat: {self.seat})"
+        return f"{str(self.movie_session)}"
 
     class Meta:
         unique_together = ("movie_session", "row", "seat")
