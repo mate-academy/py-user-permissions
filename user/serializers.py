@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "password": {
                 "write_only": True,
-                "min_length": 8
+                "min_length": 5
             }
         }
 
