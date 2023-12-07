@@ -14,14 +14,3 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
             )
 
         )
-
-
-class PermissionMixin:
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
-
-    def get_permissions(self):
-        return [
-            permission()
-            for permission in self.permission_classes
-            if self.action in self.permission_required_actions
-        ]
