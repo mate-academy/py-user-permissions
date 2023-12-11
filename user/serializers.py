@@ -17,10 +17,9 @@ class UserSerializer(serializers.ModelSerializer):
         user = get_user_model().objects.select_for_update().get(pk=instance.pk)
         for attr, value in validated_data.items():
             setattr(user, attr, value)
-        user.save()
 
         if password:
             user.set_password(password)
-            user.save()
 
+        user.save()
         return user
