@@ -14,7 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         password = validated_data.pop("password", None)
-        user = super().update(instance, validated_data)
+        user = get_user_model().objects.select_for_update().get(pk=instance.pk)
+        for attr, value in validated_data.items():
+            setattr(user, attr, value)
+        user.save()
 
         if password:
             user.set_password(password)
