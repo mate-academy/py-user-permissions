@@ -3,6 +3,7 @@ from datetime import datetime
 from django.db.models import F, Count
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
@@ -54,12 +55,14 @@ class CinemaHallViewSet(
     http_method_names = ["get", "post"]
 
 
-class MovieViewSet(viewsets.ModelViewSet):
+class MovieViewSet(mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   mixins.RetrieveModelMixin,
+                   viewsets.GenericViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    http_method_names = ["get", "post", "retrieve"]
 
     @staticmethod
     def _params_to_ints(qs):
@@ -97,7 +100,12 @@ class MovieViewSet(viewsets.ModelViewSet):
         return MovieSerializer
 
 
-class MovieSessionViewSet(viewsets.ModelViewSet):
+class MovieSessionViewSet(mixins.ListModelMixin,
+                          mixins.CreateModelMixin,
+                          mixins.RetrieveModelMixin,
+                          mixins.UpdateModelMixin,
+                          mixins.DestroyModelMixin,
+                          viewsets.GenericViewSet):
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
@@ -113,7 +121,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
     serializer_class = MovieSessionSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    http_method_names = ["get", "post", "put", "patch", "delete"]
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -155,7 +162,6 @@ class OrderViewSet(
     pagination_class = OrderPagination
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-    http_method_names = ["get", "post"]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
