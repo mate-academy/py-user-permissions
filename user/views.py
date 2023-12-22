@@ -11,13 +11,13 @@ class UserCreateView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 
-class TokenCreateView(ObtainAuthToken):
+class CreateTokenView(ObtainAuthToken):
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
 
-class ManageUserView(generics.RetrieveUpdateAPIView):
+class UserManageView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
-    authentication_classes = (TokenAuthentication, )
+    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated, )
 
     def get_object(self):
