@@ -1,7 +1,8 @@
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from rest_framework import serializers
 
-from cinema.models import (
+from .models import (
     Genre,
     Actor,
     CinemaHall,
@@ -83,12 +84,12 @@ class MovieSessionListSerializer(MovieSessionSerializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
-    def validate(self, attrs):
-        data = super(TicketSerializer, self).validate(attrs=attrs)
-        Ticket.validate_ticket(
-            attrs["row"], attrs["seat"], attrs["movie_session"]
-        )
-        return data
+    # def validate(self, attrs):
+    #     data = super(TicketSerializer, self).validate(attrs=attrs)
+    #     Ticket.validate_ticket(
+    #         attrs["row"], attrs["seat"], attrs["movie_session"], "ValidationError"
+    #     )
+    #     return data
 
     class Meta:
         model = Ticket
