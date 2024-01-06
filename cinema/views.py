@@ -2,7 +2,7 @@ from datetime import datetime
 from django.db.models import F, Count
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
 from rest_framework.pagination import PageNumberPagination
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
@@ -29,11 +29,6 @@ class BaseViewSet(
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-    def get_permissions(self):
-        if self.action in ("list", "create"):
-            return super().get_permissions()
-        return [IsAdminUser()]
-
 
 class GenreViewSet(BaseViewSet):
     queryset = Genre.objects.all()
@@ -44,32 +39,17 @@ class ActorViewSet(BaseViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
-    def get_permissions(self):
-        if self.action in ("list", "create"):
-            return super().get_permissions()
-        return [IsAdminUser()]
-
 
 class CinemaHallViewSet(BaseViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
 
-class MovieViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet
-):
+class MovieViewSet(BaseViewSet, mixins.RetrieveModelMixin):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-
-    def get_permissions(self):
-        if self.action in ("list", "create", "retrieve"):
-            return super().get_permissions()
-        return [IsAdminUser()]
 
     @staticmethod
     def _params_to_ints(qs):
@@ -112,8 +92,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
         .annotate(
-            tickets_available=F("cinema_hall__rows")
-            * F("cinema_hall__seats_in_row")
+            tickets_available=F("cinema_hall__rows") * F("cinema_hall__seats_in_row")
             - Count("tickets")
         )
     )
@@ -151,11 +130,7 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
-):
+class OrderViewSet(BaseViewSet):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
@@ -163,11 +138,6 @@ class OrderViewSet(
     pagination_class = OrderPagination
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-
-    def get_permissions(self):
-        if self.action in ("list", "create"):
-            return super().get_permissions()
-        return [IsAdminUser()]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
