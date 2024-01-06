@@ -1,9 +1,8 @@
 from datetime import datetime
 from django.db.models import F, Count
-from rest_framework import viewsets, status, mixins
+from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.response import Response
 from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
 from rest_framework.pagination import PageNumberPagination
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
@@ -22,47 +21,55 @@ from cinema.serializers import (
 )
 
 
-class BaseCustomViewSet(viewsets.ModelViewSet):
+class BaseViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
+):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    def create(self, request, *args, **kwargs):
-        return super().create(request, args, kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def partial_update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def destroy(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_permissions(self):
+        if self.action in ("list", "create"):
+            return super().get_permissions()
+        return [IsAdminUser()]
 
 
-class GenreViewSet(BaseCustomViewSet):
+class GenreViewSet(BaseViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
-class ActorViewSet(BaseCustomViewSet):
+class ActorViewSet(BaseViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
+    def get_permissions(self):
+        if self.action in ("list", "create"):
+            return super().get_permissions()
+        return [IsAdminUser()]
 
-class CinemaHallViewSet(BaseCustomViewSet):
+
+class CinemaHallViewSet(BaseViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
 
-class MovieViewSet(BaseCustomViewSet):
+class MovieViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+    def get_permissions(self):
+        if self.action in ("list", "create", "retrieve"):
+            return super().get_permissions()
+        return [IsAdminUser()]
 
     @staticmethod
     def _params_to_ints(qs):
@@ -98,17 +105,6 @@ class MovieViewSet(BaseCustomViewSet):
             return MovieDetailSerializer
 
         return MovieSerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    def destroy(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
@@ -156,7 +152,9 @@ class OrderPagination(PageNumberPagination):
 
 
 class OrderViewSet(
-    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
 ):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
@@ -169,7 +167,7 @@ class OrderViewSet(
     def get_permissions(self):
         if self.action in ("list", "create"):
             return super().get_permissions()
-        return [IsAdminUser]
+        return [IsAdminUser()]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
