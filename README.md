@@ -1,6 +1,7 @@
 # Token Authentication API
 
-Read [the guideline](https://github.com/mate-academy/py-task-guideline/blob/main/README.md) before starting.
+Read [the guideline](https://github.com/mate-academy/py-task-guideline/blob/main/REA develop
+DME.md) before starting.
 - Download [ModHeader](https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj?hl=en)
 - Use the following command to load prepared data from fixture to test and debug your code:
   `python manage.py loaddata cinema_service_db_data.json`.
@@ -10,7 +11,12 @@ Read [the guideline](https://github.com/mate-academy/py-task-guideline/blob/main
 
 ### In this task you will add the functionality of token authentication
 
-At this part of the task, we will do authorization by using tokens. The functionality of regular users will be limited so that they cannot add, delete or update other data on the site, besides their orders.  Moreover, only authenticated users will be able to create an order.  Deletion will be prohibited even for the administrator, if only through the admin panel. That's because of  when we're deleting, for example, a genre, the other relationships from other tables won't be deleted
+At this part of the task, we will do authorization by using tokens. The functionality of regular users
+will be limited so that they cannot add, delete or update other data on the site, besides their orders. 
+Moreover, only authenticated users will be able to create an order.
+Deletion will be prohibited even for the administrator, if only through the admin panel.
+That's because of  when we're deleting, for example, a genre,
+the other relationships from other tables won't be deleted
 
 1. Create serializers and views to support the following endpoints:
    * `POST api/user/register/` - You can create here a user (password length must be >= 5 symbols)
@@ -33,7 +39,8 @@ Vary: Accept
 }
 ```
 
-2. By default, all API endpoints (inside cinema app) must have the following action limitations depending on the user role:
+2. By default, all API endpoints (inside cinema app) must have the following action
+3. limitations depending on the user role:
 
  * Implement such custom permission class `IsAdminOrIfAuthenticatedReadOnly`.
 
