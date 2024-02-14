@@ -8,7 +8,7 @@ urlpatterns = [
          name="create"),
     path("login/",
          CreateTokenView.as_view(),
-         name="token"),
+         name="login"),
     path("me/",
          ManageUserView.as_view(),
          name="manage"),
