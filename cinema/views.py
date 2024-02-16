@@ -21,7 +21,10 @@ from cinema.serializers import (
     OrderListSerializer,
 )
 
-from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly, AuthenticatedReadCreate
+from cinema.permissions import (
+    IsAdminOrIfAuthenticatedReadOnly,
+    AuthenticatedReadCreate,
+)
 
 
 class DefaultPermissionGenericViewSet(viewsets.GenericViewSet):
@@ -29,22 +32,39 @@ class DefaultPermissionGenericViewSet(viewsets.GenericViewSet):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-class GenreViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, DefaultPermissionGenericViewSet):
+class GenreViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    DefaultPermissionGenericViewSet
+):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
-class ActorViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, DefaultPermissionGenericViewSet):
+class ActorViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    DefaultPermissionGenericViewSet
+):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
 
-class CinemaHallViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, DefaultPermissionGenericViewSet):
+class CinemaHallViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    DefaultPermissionGenericViewSet
+):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
 
-class MovieViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, DefaultPermissionGenericViewSet):
+class MovieViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    DefaultPermissionGenericViewSet
+):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
 
@@ -84,7 +104,14 @@ class MovieViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.Retrie
         return MovieSerializer
 
 
-class MovieSessionViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, DefaultPermissionGenericViewSet):
+class MovieSessionViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    DefaultPermissionGenericViewSet
+):
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
@@ -127,7 +154,11 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, DefaultPermissionGenericViewSet):
+class OrderViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    DefaultPermissionGenericViewSet
+):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
