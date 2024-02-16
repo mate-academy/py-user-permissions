@@ -40,10 +40,9 @@ class ActorViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, DefaultPermis
     serializer_class = ActorSerializer
 
 
-class CinemaHallViewSet(viewsets.ModelViewSet):
+class CinemaHallViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, DefaultPermissionGenericViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class MovieViewSet(viewsets.ModelViewSet):
