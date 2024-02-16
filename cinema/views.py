@@ -29,10 +29,9 @@ class DefaultPermissionGenericViewSet(viewsets.GenericViewSet):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, DefaultPermissionGenericViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class ActorViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, DefaultPermissionGenericViewSet):
