@@ -21,7 +21,7 @@ from cinema.serializers import (
     OrderListSerializer,
 )
 
-from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
+from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly, AuthenticatedReadCreate
 
 
 class DefaultPermissionGenericViewSet(viewsets.GenericViewSet):
@@ -128,13 +128,13 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, DefaultPermissionGenericViewSet):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    permission_classes = (AuthenticatedReadCreate,)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
