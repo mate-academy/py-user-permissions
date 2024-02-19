@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import F, Count
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework import viewsets
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 from rest_framework.pagination import PageNumberPagination
 from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
