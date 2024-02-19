@@ -23,6 +23,7 @@ from cinema.serializers import (
     MovieSessionDetailSerializer,
 )
 
+
 class AuthMixViewMixin(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -30,6 +31,7 @@ class AuthMixViewMixin(
 ):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
 
 class GenreViewSet(AuthMixViewMixin):
     queryset = Genre.objects.all()
@@ -42,13 +44,16 @@ class GenreViewSet(AuthMixViewMixin):
             self.permission_classes = ()
         return super().get_permissions()
 
+
 class ActorViewSet(AuthMixViewMixin):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
+
 class CinemaHallViewSet(AuthMixViewMixin):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
+
 
 class MovieViewSet(AuthMixViewMixin, mixins.RetrieveModelMixin):
     queryset = Movie.objects.prefetch_related("genres", "actors")
@@ -81,6 +86,7 @@ class MovieViewSet(AuthMixViewMixin, mixins.RetrieveModelMixin):
         if self.action == "retrieve":
             return MovieDetailSerializer
         return MovieSerializer
+
 
 class MovieSessionViewSet(AuthMixViewMixin):
     queryset = (
@@ -116,9 +122,11 @@ class MovieSessionViewSet(AuthMixViewMixin):
             return MovieSessionDetailSerializer
         return MovieSessionSerializer
 
+
 class OrderPagination(PageNumberPagination):
     page_size = 10
     max_page_size = 100
+
 
 class OrderViewSet(AuthMixViewMixin):
     queryset = Order.objects.prefetch_related(
