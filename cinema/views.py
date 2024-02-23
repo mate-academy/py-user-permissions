@@ -9,7 +9,10 @@ from rest_framework.permissions import IsAuthenticated
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
-from cinema.mixins import ListCreateAuthMixin
+from cinema.mixins import (
+    ListCreateAuthMixin,
+    ListCreateAuthMixinWithPermissions,
+)
 
 from cinema.serializers import (
     GenreSerializer,
@@ -26,37 +29,19 @@ from cinema.serializers import (
 )
 
 
-class GenreViewSet(ListCreateAuthMixin):
+class GenreViewSet(ListCreateAuthMixinWithPermissions):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
-    def get_permissions(self):
-        if self.action in ("list", "create"):
-            return [IsAdminOrIfAuthenticatedReadOnly(),]
 
-        return []
-
-
-class ActorViewSet(ListCreateAuthMixin):
+class ActorViewSet(ListCreateAuthMixinWithPermissions):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
-    def get_permissions(self):
-        if self.action in ("list", "create"):
-            return [IsAdminOrIfAuthenticatedReadOnly(), ]
 
-        return []
-
-
-class CinemaHallViewSet(ListCreateAuthMixin):
+class CinemaHallViewSet(ListCreateAuthMixinWithPermissions):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
-
-    def get_permissions(self):
-        if self.action in ("list", "create"):
-            return [IsAdminOrIfAuthenticatedReadOnly(),]
-
-        return []
 
 
 class MovieViewSet(

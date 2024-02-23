@@ -15,3 +15,11 @@ class ListCreateAuthMixin(
 ):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+
+class ListCreateAuthMixinWithPermissions(ListCreateAuthMixin):
+    def get_permissions(self):
+        if self.action in ("list", "create"):
+            return [IsAdminOrIfAuthenticatedReadOnly(),]
+
+        return []
