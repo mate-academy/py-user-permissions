@@ -2,12 +2,14 @@ from django.urls import path
 
 from user.views import (
     CreateUserView,
-    CreateTokenView
+    CreateTokenView,
+    ManageUserView,
 )
 
 urlpatterns = [
     path("register/", CreateUserView.as_view(), name="register"),
-    path("login/", CreateTokenView.as_view(), name="login")
+    path("login/", CreateTokenView.as_view(), name="login"),
+    path("me/", ManageUserView.as_view(), name="me"),
 ]
 
 app_name = "user"
