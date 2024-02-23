@@ -20,6 +20,6 @@ class ListCreateAuthMixin(
 class ListCreateAuthMixinWithPermissions(ListCreateAuthMixin):
     def get_permissions(self):
         if self.action in ("list", "create"):
-            return [IsAdminOrIfAuthenticatedReadOnly(),]
+            return [IsAdminOrIfAuthenticatedReadOnly(), ]
 
         return []

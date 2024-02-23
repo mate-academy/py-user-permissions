@@ -23,4 +23,3 @@ class UserSerializer(ModelSerializer):
             user.save()
 
         return user
-

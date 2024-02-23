@@ -152,8 +152,8 @@ class OrderViewSet(ListCreateAuthMixin):
 
     def get_permissions(self):
         if self.action == "list":
-            return [IsAdminOrIfAuthenticatedReadOnly(),]
+            return [IsAdminOrIfAuthenticatedReadOnly(), ]
         elif self.action == "create":
-            return [IsAuthenticated(),]
+            return [IsAuthenticated(), ]
 
         return []
