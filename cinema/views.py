@@ -162,7 +162,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.action not in ["list", "create"]:
             raise NotFound
         else:
-            permissions_classes = [IsAuthenticated,]
+            permissions_classes = [IsAuthenticated, ]
         return [permission() for permission in permissions_classes]
 
     def get_queryset(self):
