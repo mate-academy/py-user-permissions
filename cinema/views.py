@@ -1,17 +1,23 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.exceptions import NotFound, MethodNotAllowed
-from rest_framework import viewsets, mixins
-from rest_framework import generics
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin
+from rest_framework.mixins import (
+    ListModelMixin,
+    CreateModelMixin,
+    RetrieveModelMixin
+)
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.settings import api_settings
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
+from cinema.models import (
+    Genre,
+    Actor,
+    CinemaHall,
+    Movie,
+    MovieSession,
+    Order
+)
 
 from cinema.serializers import (
     GenreSerializer,
@@ -31,14 +37,6 @@ from cinema.serializers import (
 class GenreViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    # http_method_names = ["get", "post"]
-    #
-    # def get_permissions(self):
-    #     if self.action not in ["list", "create"]:
-    #         raise NotFound
-    #     else:
-    #         permissions_classes = api_settings.DEFAULT_PERMISSION_CLASSES
-    #     return [permission() for permission in permissions_classes]
 
 
 class ActorViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
@@ -51,7 +49,12 @@ class CinemaHallViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
     serializer_class = CinemaHallSerializer
 
 
-class MovieViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin):
+class MovieViewSet(
+    GenericViewSet,
+    ListModelMixin,
+    CreateModelMixin,
+    RetrieveModelMixin
+):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
 
@@ -91,7 +94,7 @@ class MovieViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveMod
         return MovieSerializer
 
 
-class MovieSessionViewSet(viewsets.ModelViewSet):
+class MovieSessionViewSet(ModelViewSet):
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
@@ -139,7 +142,7 @@ class OrderViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
