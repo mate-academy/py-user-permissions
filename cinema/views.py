@@ -1,12 +1,15 @@
 from datetime import datetime
 
 from django.db.models import F, Count
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import NotFound, MethodNotAllowed
-from rest_framework import viewsets
-from rest_framework.exceptions import PermissionDenied
+from rest_framework import viewsets, mixins
+from rest_framework import generics
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.settings import api_settings
+from rest_framework.viewsets import GenericViewSet
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 
@@ -25,44 +28,30 @@ from cinema.serializers import (
 )
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    http_method_names = ["get", "post"]
+    # http_method_names = ["get", "post"]
+    #
+    # def get_permissions(self):
+    #     if self.action not in ["list", "create"]:
+    #         raise NotFound
+    #     else:
+    #         permissions_classes = api_settings.DEFAULT_PERMISSION_CLASSES
+    #     return [permission() for permission in permissions_classes]
 
-    def get_permissions(self):
-        if self.action not in ["list", "create"]:
-            raise NotFound
-        else:
-            permissions_classes = api_settings.DEFAULT_PERMISSION_CLASSES
-        return [permission() for permission in permissions_classes]
 
-
-class ActorViewSet(viewsets.ModelViewSet):
+class ActorViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
-    def get_permissions(self):
-        if self.action not in ["list", "create"]:
-            raise NotFound
-        else:
-            permissions_classes = api_settings.DEFAULT_PERMISSION_CLASSES
-        return [permission() for permission in permissions_classes]
 
-
-class CinemaHallViewSet(viewsets.ModelViewSet):
+class CinemaHallViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
-    def get_permissions(self):
-        if self.action not in ["list", "create"]:
-            raise NotFound
-        else:
-            permissions_classes = api_settings.DEFAULT_PERMISSION_CLASSES
-        return [permission() for permission in permissions_classes]
 
-
-class MovieViewSet(viewsets.ModelViewSet):
+class MovieViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
 
@@ -100,13 +89,6 @@ class MovieViewSet(viewsets.ModelViewSet):
             return MovieDetailSerializer
 
         return MovieSerializer
-
-    def get_permissions(self):
-        if self.action not in ["list", "create", "retrieve"]:
-            raise MethodNotAllowed("put")
-        else:
-            permissions_classes = api_settings.DEFAULT_PERMISSION_CLASSES
-        return [permission() for permission in permissions_classes]
 
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
@@ -151,19 +133,13 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-
-    def get_permissions(self):
-        if self.action not in ["list", "create"]:
-            raise NotFound
-        else:
-            permissions_classes = [IsAuthenticated, ]
-        return [permission() for permission in permissions_classes]
+    permission_classes = [IsAuthenticated,]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
