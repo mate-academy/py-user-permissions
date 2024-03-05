@@ -143,6 +143,6 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "user.permissions.IsAdminOrIfAuthenticatedReadOnly",
+        "cinema.permissions.IsAdminOrIfAuthenticatedReadOnly",
     ]
 }
