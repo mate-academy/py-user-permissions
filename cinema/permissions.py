@@ -3,7 +3,6 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
     def has_permission(self, request, view):
-        # allowed_methods = ["GET", "HEAD", "OPTIONS", ]  #?
         return bool(
             (
                 request.method in SAFE_METHODS
