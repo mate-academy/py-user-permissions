@@ -8,13 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .permissions import IsAdminOrIfAuthenticatedReadOnly
 
-from .models import (
-    Genre,
-    Actor,
-    CinemaHall,
-    Movie,
-    MovieSession,
-    Order)
+from .models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 
 from .serializers import (
     GenreSerializer,
@@ -32,9 +26,7 @@ from .serializers import (
 
 
 class GenreViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
 ):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -43,9 +35,7 @@ class GenreViewSet(
 
 
 class ActorViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
 ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
@@ -54,9 +44,7 @@ class ActorViewSet(
 
 
 class CinemaHallViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
 ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
@@ -68,7 +56,7 @@ class MovieViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
@@ -116,9 +104,8 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
         .annotate(
-            tickets_available=F("cinema_hall__rows")
-                              * F("cinema_hall__seats_in_row")
-                              - Count("tickets")
+            available=F("cinema_hall__rows") * F("cinema_hall__seats_in_row")
+            - Count("tickets")
         )
     )
     serializer_class = MovieSessionSerializer
@@ -156,9 +143,7 @@ class OrderPagination(PageNumberPagination):
 
 
 class OrderViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
 ):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
