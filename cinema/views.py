@@ -106,12 +106,7 @@ class MovieViewSet(
 
 
 class MovieSessionViewSet(
-    viewsets.GenericViewSet,
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
+    viewsets.ModelViewSet
 ):
     queryset = (
         MovieSession.objects.all()
@@ -183,7 +178,7 @@ class OrderViewSet(
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_permissions(self):
-        if self.action in "create":
+        if self.action == "create":
             return (IsAuthenticated(),)
         else:
             return super().get_permissions()
