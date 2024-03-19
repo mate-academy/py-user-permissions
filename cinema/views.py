@@ -6,7 +6,14 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
-from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
+from cinema.models import (
+    Genre,
+    Actor,
+    CinemaHall,
+    Movie,
+    MovieSession,
+    Order
+)
 from cinema.permisions import IsAdminOrIfAuthenticatedReadOnly
 
 from cinema.serializers import (
@@ -175,10 +182,4 @@ class OrderViewSet(
         serializer.save(user=self.request.user)
 
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-
-    def get_permissions(self):
-        if self.action == "create":
-            return (IsAuthenticated(),)
-        else:
-            return super().get_permissions()
+    permission_classes = (IsAuthenticated,)
