@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
 
+
 from cinema.serializers import (
     GenreSerializer,
     ActorSerializer,
@@ -24,6 +25,17 @@ from cinema.serializers import (
 )
 
 
+class ActorViewSet(
+    viewsets.GenericViewSet,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin
+):
+    queryset = Actor.objects.all()
+    serializer_class = ActorSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+
 class GenreViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
@@ -35,13 +47,13 @@ class GenreViewSet(
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-class ActorViewSet(
+class CinemaHallViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin
 ):
-    queryset = Actor.objects.all()
-    serializer_class = ActorSerializer
+    queryset = CinemaHall.objects.all()
+    serializer_class = CinemaHallSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
@@ -54,17 +66,6 @@ class MovieViewSet(
 ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-
-
-class CinemaHallViewSet(
-    viewsets.GenericViewSet,
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin
-):
-    queryset = CinemaHall.objects.all()
-    serializer_class = CinemaHallSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
