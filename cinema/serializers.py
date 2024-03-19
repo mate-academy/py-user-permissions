@@ -88,6 +88,7 @@ class TicketSerializer(serializers.ModelSerializer):
         Ticket.validate_ticket(
             attrs["row"], attrs["seat"], attrs["movie_session"]
         )
+
         return data
 
     class Meta:
