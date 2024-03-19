@@ -32,13 +32,6 @@ class GenreViewSet(
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-    def get_permissions(self):
-        if self.action == "list" or self.action == "create":
-            permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
-        else:
-            permission_classes = self.permission_classes
-        return [permission() for permission in permission_classes]
-
 
 class ActorViewSet(
     viewsets.GenericViewSet,
