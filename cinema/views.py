@@ -68,8 +68,6 @@ class CinemaHallViewSet(
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-
-
     @staticmethod
     def _params_to_ints(qs):
         """Converts a list of string IDs to a list of integers"""
