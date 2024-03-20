@@ -23,14 +23,3 @@ class IsAuthenticatedOrReadOnly(BasePermission):
             )
             or (request.user and request.user.is_staff)
         )
-
-
-class IsNotAuthenticatedUser(BasePermission):
-    def has_permission(self, request, view):
-        return bool(
-            (
-                request.method in ("POST", "GET")
-                and request.user
-            )
-            or (request.user and request.user.is_staff)
-        )
