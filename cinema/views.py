@@ -7,9 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
 from .permissions import IsAdminOrIfAuthenticatedReadOnly
-
 from .models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-
 from .serializers import (
     GenreSerializer,
     ActorSerializer,
