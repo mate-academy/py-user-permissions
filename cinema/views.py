@@ -2,12 +2,11 @@ from datetime import datetime
 
 from django.db.models import F, Count
 from rest_framework import viewsets, mixins
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-from cinema.permissions import IsAuthenticatedOrReadOnly
+from cinema.permissions import CreateIfIsAuthenticated
 
 from cinema.serializers import (
     GenreSerializer,
@@ -143,7 +142,7 @@ class OrderViewSet(mixins.CreateModelMixin,
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-    permission_classes = (IsAuthenticatedOrReadOnly, )
+    permission_classes = (CreateIfIsAuthenticated, )
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
