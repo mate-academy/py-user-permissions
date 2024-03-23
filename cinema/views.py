@@ -101,6 +101,7 @@ class MovieSessionViewSet(
             - Count("tickets")
         )
     )
+
     serializer_class = MovieSessionSerializer
 
     def get_queryset(self):
