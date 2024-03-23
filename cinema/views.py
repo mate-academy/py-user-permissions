@@ -89,7 +89,12 @@ class MovieViewSet(
 
 
 class MovieSessionViewSet(
-    mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
 ):
     queryset = (
         MovieSession.objects.all()
@@ -101,7 +106,6 @@ class MovieSessionViewSet(
             - Count("tickets")
         )
     )
-
     serializer_class = MovieSessionSerializer
 
     def get_queryset(self):
