@@ -1,12 +1,11 @@
 from django.test import TestCase
 from django.urls import reverse
-
-from rest_framework.test import APIClient
 from rest_framework import status
+from rest_framework.test import APIClient
 
 from cinema.models import Movie, Genre, Actor
-from user.tests.test_user_api import create_user
 from cinema.serializers import MovieDetailSerializer
+from user.tests.test_user_api import create_user
 
 MOVIE_URL = reverse("cinema:movie-list")
 
