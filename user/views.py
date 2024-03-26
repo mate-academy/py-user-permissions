@@ -28,7 +28,8 @@ class CreateTokenView(ObtainAuthToken):
                 user = User.objects.get(username=username)
             except User.DoesNotExist:
                 return Response(
-                    {"error": "User does not exist"}, status=status.HTTP_404_NOT_FOUND
+                    {"error": "User does not exist"},
+                    status=status.HTTP_404_NOT_FOUND
                 )
 
             if user.check_password(password):
@@ -36,7 +37,8 @@ class CreateTokenView(ObtainAuthToken):
                 return Response({"token": token.key})
 
         return Response(
-            {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
+            {"error": "Invalid credentials"},
+            status=status.HTTP_400_BAD_REQUEST
         )
 
 
