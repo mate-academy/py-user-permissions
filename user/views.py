@@ -16,30 +16,15 @@ class CreateUserView(generics.CreateAPIView):
 
 
 class CreateTokenView(ObtainAuthToken):
-    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
-    serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
-        username = request.data.get("username")
-        password = request.data.get("password")
-
-        if username and password:
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                return Response(
-                    {"error": "User does not exist"},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-
-            if user.check_password(password):
-                token, created = Token.objects.get_or_create(user=user)
-                return Response({"token": token.key})
-
-        return Response(
-            {"error": "Invalid credentials"},
-            status=status.HTTP_400_BAD_REQUEST
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
         )
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({"token": token.key})
 
 
 class ManageUserView(generics.RetrieveUpdateAPIView):
