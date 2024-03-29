@@ -1,3 +1,4 @@
+from rest_framework import mixins
 from datetime import datetime
 
 from django.db.models import F, Count
@@ -5,6 +6,7 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
+from user.permissions import IsAdminOrIfAuthenticatedReadOnly
 
 from cinema.serializers import (
     GenreSerializer,
@@ -21,17 +23,18 @@ from cinema.serializers import (
 )
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet, ):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-class ActorViewSet(viewsets.ModelViewSet):
+class ActorViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet, ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
 
-class CinemaHallViewSet(viewsets.ModelViewSet):
+class CinemaHallViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet, ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
@@ -82,8 +85,8 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         .select_related("movie", "cinema_hall")
         .annotate(
             tickets_available=F("cinema_hall__rows")
-            * F("cinema_hall__seats_in_row")
-            - Count("tickets")
+                              * F("cinema_hall__seats_in_row")
+                              - Count("tickets")
         )
     )
     serializer_class = MovieSessionSerializer
