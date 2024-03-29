@@ -86,7 +86,12 @@ class MovieViewSet(
         return MovieSerializer
 
 
-class MovieSessionViewSet(viewsets.ModelViewSet):
+class MovieSessionViewSet(mixins.ListModelMixin,
+                          mixins.CreateModelMixin,
+                          mixins.UpdateModelMixin,
+                          mixins.RetrieveModelMixin,
+                          mixins.DestroyModelMixin,
+                          viewsets.GenericViewSet, ):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
     queryset = (
         MovieSession.objects.all()
@@ -130,7 +135,9 @@ class OrderPagination(PageNumberPagination):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(mixins.ListModelMixin,
+                   mixins.CreateModelMixin,
+                   viewsets.GenericViewSet, ):
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
