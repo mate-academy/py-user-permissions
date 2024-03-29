@@ -4,8 +4,9 @@ from datetime import datetime
 from django.db.models import F, Count
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
-
+from rest_framework.authentication import TokenAuthentication
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
+from rest_framework import permissions
 from user.permissions import IsAdminOrIfAuthenticatedReadOnly
 
 from cinema.serializers import (
@@ -32,6 +33,7 @@ class GenreViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Gene
 class ActorViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet, ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
@@ -138,7 +140,7 @@ class OrderPagination(PageNumberPagination):
 class OrderViewSet(mixins.ListModelMixin,
                    mixins.CreateModelMixin,
                    viewsets.GenericViewSet, ):
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
