@@ -40,6 +40,7 @@ class ActorViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Gene
 class CinemaHallViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet, ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
@@ -51,7 +52,7 @@ class MovieViewSet(
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-
+    authentication_classes = [TokenAuthentication]
     @staticmethod
     def _params_to_ints(qs):
         """Converts a list of string IDs to a list of integers"""
@@ -105,7 +106,7 @@ class MovieSessionViewSet(mixins.ListModelMixin,
         )
     )
     serializer_class = MovieSessionSerializer
-
+    authentication_classes = [TokenAuthentication]
     def get_queryset(self):
         date = self.request.query_params.get("date")
         movie_id_str = self.request.query_params.get("movie")
@@ -146,7 +147,7 @@ class OrderViewSet(mixins.ListModelMixin,
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-
+    authentication_classes = [TokenAuthentication]
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
 
