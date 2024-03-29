@@ -44,9 +44,7 @@ class CinemaHallViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets
 class MovieViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    mixins.UpdateModelMixin,
     mixins.RetrieveModelMixin,
-    mixins.DestroyModelMixin,
     viewsets.GenericViewSet, ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
