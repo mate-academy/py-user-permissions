@@ -32,16 +32,25 @@ class GenreViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Gene
 class ActorViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet, ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class CinemaHallViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet, ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-class MovieViewSet(viewsets.ModelViewSet):
+class MovieViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet, ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     @staticmethod
     def _params_to_ints(qs):
@@ -80,6 +89,7 @@ class MovieViewSet(viewsets.ModelViewSet):
 
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
@@ -119,9 +129,11 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
 class OrderPagination(PageNumberPagination):
     page_size = 10
     max_page_size = 100
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class OrderViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
