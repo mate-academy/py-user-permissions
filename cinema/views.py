@@ -5,7 +5,6 @@ from rest_framework import mixins, viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import GenericViewSet
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
@@ -26,7 +25,7 @@ from cinema.serializers import (
 
 class GenreViewSet(mixins.CreateModelMixin,
                    mixins.ListModelMixin,
-                   GenericViewSet):
+                   viewsets.GenericViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     authentication_classes = (TokenAuthentication,)
@@ -35,7 +34,7 @@ class GenreViewSet(mixins.CreateModelMixin,
 
 class ActorViewSet(mixins.CreateModelMixin,
                    mixins.ListModelMixin,
-                   GenericViewSet):
+                   viewsets.GenericViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
     authentication_classes = (TokenAuthentication,)
@@ -44,7 +43,7 @@ class ActorViewSet(mixins.CreateModelMixin,
 
 class CinemaHallViewSet(mixins.CreateModelMixin,
                         mixins.ListModelMixin,
-                        GenericViewSet):
+                        viewsets.GenericViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
     authentication_classes = (TokenAuthentication,)
@@ -54,7 +53,7 @@ class CinemaHallViewSet(mixins.CreateModelMixin,
 class MovieViewSet(mixins.CreateModelMixin,
                    mixins.RetrieveModelMixin,
                    mixins.ListModelMixin,
-                   GenericViewSet):
+                   viewsets.GenericViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
@@ -146,7 +145,7 @@ class OrderPagination(PageNumberPagination):
 
 class OrderViewSet(mixins.CreateModelMixin,
                    mixins.ListModelMixin,
-                   GenericViewSet):
+                   viewsets.GenericViewSet):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
