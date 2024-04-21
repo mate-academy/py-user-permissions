@@ -33,6 +33,12 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "cinema.permissions.IsAdminOrIfAuthenticatedReadOnly",
+    ]
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -125,7 +131,7 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
