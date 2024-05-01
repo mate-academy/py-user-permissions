@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import CreateUserView, LoginUserView, ManageUserView
-from rest_framework.authtoken import views
+
 
 urlpatterns = [
     path("register/", CreateUserView.as_view(), name="create"),
