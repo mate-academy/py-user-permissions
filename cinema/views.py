@@ -108,7 +108,6 @@ class MovieSessionViewSet(viewsets.GenericViewSet,
     )
     serializer_class = MovieSessionSerializer
     authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -146,7 +145,6 @@ class OrderViewSet(CreateModelMixin, viewsets.GenericViewSet, ListModelMixin):
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_permissions(self):
         if self.action == "create":
@@ -157,7 +155,7 @@ class OrderViewSet(CreateModelMixin, viewsets.GenericViewSet, ListModelMixin):
         return Order.objects.filter(user=self.request.user)
 
     def get_serializer_class(self):
-        if self.action == "create":
+        if self.action == "list":
             return OrderListSerializer
 
         return OrderSerializer
