@@ -3,9 +3,10 @@ from datetime import datetime
 from django.db.models import F, Count
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-
+from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
 from cinema.serializers import (
     GenreSerializer,
     ActorSerializer,
@@ -24,6 +25,7 @@ from cinema.serializers import (
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
 class ActorViewSet(viewsets.ModelViewSet):
@@ -39,6 +41,7 @@ class CinemaHallViewSet(viewsets.ModelViewSet):
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     @staticmethod
     def _params_to_ints(qs):
@@ -77,6 +80,7 @@ class MovieViewSet(viewsets.ModelViewSet):
 
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
