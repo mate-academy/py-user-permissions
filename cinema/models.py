@@ -1,6 +1,6 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.conf import settings
 
 
 class CinemaHall(models.Model):
@@ -122,8 +122,10 @@ class Ticket(models.Model):
         )
 
     def __str__(self):
-        return (f"{str(self.movie_session)} "
-                f"(row: {self.row}, seat: {self.seat})")
+        return (
+            f"{str(self.movie_session)} "
+            f"(row: {self.row}, seat: {self.seat})"
+        )
 
     class Meta:
         unique_together = ("movie_session", "row", "seat")
