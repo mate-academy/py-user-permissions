@@ -1,8 +1,7 @@
 asgiref==3.8.1
 click==8.1.7
 colorama==0.4.6
-Django>=4.1
-django-debug-toolbar>=3.2.4
+Django>=5.0.6
 djangorestframework>=3.13.1
 flake8>=5.0.4
 flake8-quotes>=3.3.1
