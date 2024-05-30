@@ -96,13 +96,16 @@ class MovieViewSet(viewsets.GenericViewSet,
 
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
+    num_rows = F("cinema_hall__rows")
+    seats_in_row = F("cinema_hall__seats_in_row")
+    num_tickets = Count("tickets")
+    capacity = num_rows * seats_in_row
+
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
         .annotate(
-            tickets_available=F("cinema_hall__rows")
-                              * F("cinema_hall__seats_in_row")
-                              - Count("tickets")
+            tickets_available=capacity - num_tickets
         )
     )
     serializer_class = MovieSessionSerializer
