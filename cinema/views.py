@@ -26,32 +26,31 @@ from cinema.serializers import (
     OrderSerializer,
     OrderListSerializer,
 )
-from cinema_service.permission import IfAuthenticatedOrderReadAndCreate
-from cinema_service.settings import BASE_AUTHENTICATION_CLASS
+from cinema_service.permission import IsAuthenticatedOrderCreate
 
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    authentication_class = BASE_AUTHENTICATION_CLASS
+    authentication_classes = [TokenAuthentication]
 
 
 class ActorViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
-    authentication_class = BASE_AUTHENTICATION_CLASS
+    authentication_classes = [TokenAuthentication]
 
 
 class CinemaHallViewSet(viewsets.ModelViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
-    authentication_class = BASE_AUTHENTICATION_CLASS
+    authentication_classes = [TokenAuthentication]
 
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    authentication_class = BASE_AUTHENTICATION_CLASS
+    authentication_classes = [TokenAuthentication]
 
     @staticmethod
     def _params_to_ints(qs):
@@ -100,7 +99,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = MovieSessionSerializer
-    authentication_class = BASE_AUTHENTICATION_CLASS
+    authentication_classes = [TokenAuthentication]
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -138,12 +137,8 @@ class OrderViewSet(viewsets.ModelViewSet):
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-    authentication_classes = [
-        TokenAuthentication
-    ]
-    permission_classes = [
-        IfAuthenticatedOrderReadAndCreate
-    ]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticatedOrderCreate]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)

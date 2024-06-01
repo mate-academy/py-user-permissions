@@ -34,7 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
         Update user with encrypted password
         """
         password = validated_data.pop("password", None)
-        user = super.update(instance, validated_data)
+        user = super().update(instance, validated_data)
 
         if password:
             user.set_password(password)
