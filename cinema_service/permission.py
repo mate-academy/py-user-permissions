@@ -11,9 +11,7 @@ class IsAdminOrIfAuthenticatedReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return bool(request.user and request.user.is_authenticated)
-        elif request.method != "DELETE":
-            return bool(request.user and request.user.is_staff)
-        return False
+        return bool(request.user and request.user.is_staff)
 
 
 class IsAuthenticatedOrderCreate(permissions.BasePermission):
