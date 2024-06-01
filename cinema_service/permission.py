@@ -2,17 +2,51 @@ from rest_framework import permissions
 from rest_framework.permissions import SAFE_METHODS
 
 
-class IsAdminOrIfAuthenticatedReadOnly(
-    permissions.BasePermission
-):
+class IfAuthenticatedOrderReadAndCreate(permissions.BasePermission):
     """
-    Default permission class which make only
-    for admin user and all authenticated user
-    possible to read data
+    Permission class that allows:
+    - Create new order for the authenticated users
     """
+
     def has_permission(self, request, view):
-        return bool(
-            request.method is SAFE_METHODS
-            and (request.user and request.user.is_authenticated)
-            or (request.user and request.user.is_staff)
-        )
+        # Allow read and create access for authenticated users
+        if (
+            request.method in SAFE_METHODS
+            or request.method == "POST"
+        ):
+            return bool(request.user and request.user.is_authenticated)
+
+        # Allow full access for admin users except deletion
+        if (
+                request.user
+                and request.user.is_staff
+                and request.method != "DELETE"
+        ):
+            return True
+
+        return False
+
+
+class IsAdminOrIfAuthenticatedReadOnly(permissions.BasePermission):
+    """
+    Permission class that allows:
+    - Read-only access to authenticated users
+    - Full access to admin users
+    """
+
+    def has_permission(self, request, view):
+        # Allow read-only access for authenticated users
+        if (
+            request.method in SAFE_METHODS
+        ):
+            return bool(request.user and request.user.is_authenticated)
+
+        # Allow full access for admin users except deletion
+        if (
+            request.user
+            and request.user.is_staff
+            and request.method != "DELETE"
+        ):
+            return True
+
+        return False

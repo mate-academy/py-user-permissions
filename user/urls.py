@@ -10,6 +10,6 @@ app_name = "user"
 
 urlpatterns = [
     path("register/", CreateUserView.as_view(), name="create"),
-    path("login/", LoginUserView.as_view(), name="take_token"),
-    path("me/", ManageUserView.as_view(), name="manage_user")
+    path("login/", LoginUserView.as_view(), name="login"),
+    path("me/", ManageUserView.as_view(), name="manage")
 ]
