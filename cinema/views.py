@@ -24,7 +24,12 @@ from cinema.serializers import (
 )
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class PermissionMixin:
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+    authentication_classes = [TokenAuthentication]
+
+
+class GenreViewSet(PermissionMixin, viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
@@ -39,11 +44,9 @@ class CinemaHallViewSet(viewsets.ModelViewSet):
     serializer_class = CinemaHallSerializer
 
 
-class MovieViewSet(viewsets.ModelViewSet):
+class MovieViewSet(PermissionMixin, viewsets.ModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
-    authentication_classes = [TokenAuthentication]
 
     @staticmethod
     def _params_to_ints(qs):
