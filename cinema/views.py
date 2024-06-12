@@ -31,8 +31,6 @@ class GenreViewSet(
 ):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    authentication_classes = (TokenAuthentication,)
 
 
 class ActorViewSet(
@@ -42,8 +40,6 @@ class ActorViewSet(
 ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    authentication_classes = (TokenAuthentication,)
 
 
 class CinemaHallViewSet(
@@ -53,8 +49,6 @@ class CinemaHallViewSet(
 ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    authentication_classes = (TokenAuthentication,)
 
 
 class MovieViewSet(
@@ -65,8 +59,6 @@ class MovieViewSet(
 ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    authentication_classes = (TokenAuthentication,)
 
     @staticmethod
     def _params_to_ints(qs):
@@ -115,8 +107,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = MovieSessionSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    authentication_classes = (TokenAuthentication,)
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -159,7 +149,6 @@ class OrderViewSet(
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication,)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
