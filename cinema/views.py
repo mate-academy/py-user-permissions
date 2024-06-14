@@ -2,14 +2,10 @@ from datetime import datetime
 
 from django.db.models import F, Count
 from rest_framework import viewsets, mixins
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
-from .permissions import IsAdminOrIfAuthenticatedReadOnly
-
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-
 from cinema.serializers import (
     GenreSerializer,
     ActorSerializer,
@@ -30,8 +26,6 @@ class GenreViewSet(mixins.ListModelMixin,
                    viewsets.GenericViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    authentication_classes = (TokenAuthentication,)
 
 
 class ActorViewSet(mixins.ListModelMixin,
@@ -39,8 +33,6 @@ class ActorViewSet(mixins.ListModelMixin,
                    viewsets.GenericViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    authentication_classes = (TokenAuthentication,)
 
 
 class CinemaHallViewSet(mixins.ListModelMixin,
@@ -48,8 +40,6 @@ class CinemaHallViewSet(mixins.ListModelMixin,
                         viewsets.GenericViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    authentication_classes = (TokenAuthentication,)
 
 
 class MovieViewSet(mixins.ListModelMixin,
@@ -58,8 +48,6 @@ class MovieViewSet(mixins.ListModelMixin,
                    viewsets.GenericViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    authentication_classes = (TokenAuthentication,)
 
     @staticmethod
     def _params_to_ints(qs):
@@ -108,13 +96,11 @@ class MovieSessionViewSet(mixins.ListModelMixin,
         .select_related("movie", "cinema_hall")
         .annotate(
             tickets_available=F("cinema_hall__rows")
-            * F("cinema_hall__seats_in_row")
-            - Count("tickets")
+                              * F("cinema_hall__seats_in_row")
+                              - Count("tickets")
         )
     )
     serializer_class = MovieSessionSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    authentication_classes = (TokenAuthentication,)
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -155,7 +141,6 @@ class OrderViewSet(mixins.ListModelMixin,
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication,)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
