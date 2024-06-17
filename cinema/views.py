@@ -29,8 +29,6 @@ class GenreViewSet(viewsets.GenericViewSet,
                    mixins.CreateModelMixin):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    authentication_classes = (TokenAuthentication, )
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
 
 
 class ActorViewSet(viewsets.GenericViewSet,
@@ -38,8 +36,6 @@ class ActorViewSet(viewsets.GenericViewSet,
                    mixins.CreateModelMixin):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class CinemaHallViewSet(viewsets.GenericViewSet,
@@ -47,8 +43,6 @@ class CinemaHallViewSet(viewsets.GenericViewSet,
                         mixins.CreateModelMixin):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class MovieViewSet(viewsets.GenericViewSet,
@@ -57,8 +51,7 @@ class MovieViewSet(viewsets.GenericViewSet,
                    mixins.RetrieveModelMixin):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
 
     @staticmethod
     def _params_to_ints(qs):
@@ -113,8 +106,6 @@ class MovieSessionViewSet(viewsets.GenericViewSet,
         )
     )
     serializer_class = MovieSessionSerializer
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -154,7 +145,6 @@ class OrderViewSet(viewsets.GenericViewSet,
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
