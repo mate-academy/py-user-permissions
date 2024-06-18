@@ -42,3 +42,10 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
+
+
+class UserListView(serializers.ModelSerializer):
+
+    class Meta:
+        model = get_user_model()
+        fields = ("id", "username", "email", "is_staff")
