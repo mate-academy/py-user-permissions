@@ -21,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             "id",
+            "last_login",
             "is_superuser",
             "is_staff",
             "is_active",
