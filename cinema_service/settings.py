@@ -78,6 +78,12 @@ TEMPLATES = [
     },
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "user.permissions.IsAdminOrIfAuthenticatedReadOnly",
+    ]
+}
+
 WSGI_APPLICATION = "cinema_service.wsgi.application"
 
 
