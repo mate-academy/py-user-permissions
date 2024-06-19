@@ -24,9 +24,9 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
         return self.request.user
 
     def get_serializer(self, *args, **kwargs):
-        if self.request.method == 'GET':
+        if self.request.method == "GET":
             serializer_class = UserListView
-            kwargs.setdefault('context', self.get_serializer_context())
+            kwargs.setdefault("context", self.get_serializer_context())
             return serializer_class(*args, **kwargs)
 
         return super().get_serializer(*args, **kwargs)
