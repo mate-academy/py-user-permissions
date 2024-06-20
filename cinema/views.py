@@ -26,19 +26,16 @@ from cinema.serializers import (
 class GenreViewSet(generics.ListCreateAPIView, viewsets.GenericViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    authentication_classes = (TokenAuthentication,)
 
 
 class ActorViewSet(generics.ListCreateAPIView, viewsets.GenericViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
-    authentication_classes = (TokenAuthentication,)
 
 
 class CinemaHallViewSet(generics.ListCreateAPIView, viewsets.GenericViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
-    authentication_classes = (TokenAuthentication,)
 
 
 class MovieViewSet(
@@ -48,7 +45,6 @@ class MovieViewSet(
 ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    authentication_classes = (TokenAuthentication,)
 
     @staticmethod
     def _params_to_ints(qs):
@@ -97,7 +93,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = MovieSessionSerializer
-    authentication_classes = (TokenAuthentication,)
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -135,7 +130,6 @@ class OrderViewSet(generics.ListCreateAPIView, viewsets.GenericViewSet):
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-    authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
