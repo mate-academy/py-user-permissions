@@ -9,12 +9,11 @@ from user.serializers import UserSerializer
 
 class CreateUser(generics.CreateAPIView):
     serializer_class = UserSerializer
-    permission_classes = (AllowAny, )
+    permission_classes = ()
 
 
 class CreateAuthTokenView(ObtainAuthToken):
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
-    permission_classes = (AllowAny, )
 
 
 class ManageUserView(generics.RetrieveUpdateAPIView):
