@@ -116,14 +116,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "user.User"
 
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        "cinema.permissions.IsAdminOrIfAuthenticatedReadOnly"
-    ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication"
-    ],
-}
+# REST_FRAMEWORK = {
+#     "DEFAULT_PERMISSION_CLASSES": [
+#         "cinema.permissions.IsAdminOrIfAuthenticatedReadOnly"
+#     ],
+#     "DEFAULT_AUTHENTICATION_CLASSES": [
+#         "rest_framework.authentication.TokenAuthentication"
+#     ],
+# }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
