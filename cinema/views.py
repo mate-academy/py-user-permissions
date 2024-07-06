@@ -24,6 +24,7 @@ from cinema.serializers import (
 
 from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
 
+
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
