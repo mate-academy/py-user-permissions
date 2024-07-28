@@ -13,7 +13,6 @@ from cinema.models import (
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    #seriallizer for genres
     class Meta:
         model = Genre
         fields = ("id", "name")
