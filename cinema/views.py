@@ -26,7 +26,7 @@ from cinema.serializers import (
 class GenreViewSet(
     viewsets.ModelViewSet,
     mixins.ListModelMixin,
-    mixins.CreateModelMixin
+    mixins.CreateModelMixin,
 ):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -37,7 +37,7 @@ class GenreViewSet(
 class ActorViewSet(
     viewsets.ModelViewSet,
     mixins.ListModelMixin,
-    mixins.CreateModelMixin
+    mixins.CreateModelMixin,
 ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
@@ -48,7 +48,7 @@ class ActorViewSet(
 class CinemaHallViewSet(
     viewsets.ModelViewSet,
     mixins.ListModelMixin,
-    mixins.CreateModelMixin
+    mixins.CreateModelMixin,
 ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
@@ -60,7 +60,7 @@ class MovieViewSet(
     viewsets.ModelViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin
+    mixins.RetrieveModelMixin,
 ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
@@ -150,7 +150,7 @@ class OrderPagination(PageNumberPagination):
 class OrderViewSet(
     viewsets.ModelViewSet,
     mixins.ListModelMixin,
-    mixins.CreateModelMixin
+    mixins.CreateModelMixin,
 ):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
