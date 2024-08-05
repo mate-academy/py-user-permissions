@@ -24,7 +24,7 @@ from cinema.serializers import (
 
 
 class GenreViewSet(
-    viewsets.ModelViewSet,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
@@ -35,7 +35,7 @@ class GenreViewSet(
 
 
 class ActorViewSet(
-    viewsets.ModelViewSet,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
@@ -46,7 +46,7 @@ class ActorViewSet(
 
 
 class CinemaHallViewSet(
-    viewsets.ModelViewSet,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
@@ -57,7 +57,7 @@ class CinemaHallViewSet(
 
 
 class MovieViewSet(
-    viewsets.ModelViewSet,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
@@ -148,7 +148,7 @@ class OrderPagination(PageNumberPagination):
 
 
 class OrderViewSet(
-    viewsets.ModelViewSet,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
