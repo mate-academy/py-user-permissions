@@ -33,10 +33,9 @@ class GenreViewSet(viewsets.ViewSet):
 
     def create(self, request):
         serializer = GenreSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class ActorViewSet(viewsets.ViewSet):
@@ -50,10 +49,9 @@ class ActorViewSet(viewsets.ViewSet):
 
     def create(self, request):
         serializer = ActorSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class CinemaHallViewSet(viewsets.ViewSet):
@@ -67,10 +65,9 @@ class CinemaHallViewSet(viewsets.ViewSet):
 
     def create(self, request):
         serializer = CinemaHallSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class MovieViewSet(viewsets.ViewSet):
@@ -89,10 +86,9 @@ class MovieViewSet(viewsets.ViewSet):
 
     def create(self, request):
         serializer = MovieSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class MovieSessionViewSet(viewsets.ViewSet):
@@ -114,10 +110,9 @@ class MovieSessionViewSet(viewsets.ViewSet):
 
     def create(self, request):
         serializer = MovieSessionSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk=None):
         try:
@@ -125,12 +120,9 @@ class MovieSessionViewSet(viewsets.ViewSet):
             serializer = MovieSessionSerializer(
                 movie_session, data=request.data
             )
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except MovieSession.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -140,12 +132,9 @@ class MovieSessionViewSet(viewsets.ViewSet):
             serializer = MovieSessionSerializer(
                 movie_session, data=request.data, partial=True
             )
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except MovieSession.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -176,7 +165,6 @@ class OrderViewSet(viewsets.ViewSet):
 
     def create(self, request):
         serializer = OrderSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
