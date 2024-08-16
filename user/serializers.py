@@ -6,12 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ("id", "username", "email", "is_staff", "password")
-        extra_kwargs = {
-            "password": {
-                "write_only": True,
-                "min_length": 5
-            }
-        }
+        extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
         read_only_fields = ("id", "is_staff")
 
     def create(self, validated_data):
@@ -26,4 +21,3 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
-
