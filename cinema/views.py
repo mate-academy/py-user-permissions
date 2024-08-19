@@ -6,7 +6,6 @@ from rest_framework.pagination import PageNumberPagination
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 from cinema.permissions import IsAdminOrIfAuthenticatedReadAndCreate
-
 from cinema.serializers import (
     GenreSerializer,
     ActorSerializer,

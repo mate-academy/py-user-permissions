@@ -2,11 +2,6 @@ from rest_framework import permissions
 from rest_framework.permissions import BasePermission
 
 
-# unsafe (create, update, partial_update, destroy) ==   (POST, PUT, DELETE)
-# safe   (list, retrieve) ==                            (GET, HEAD, OPTIONS)
-# http_method_names = ["get", "post", "head", "options", "trace"]
-
-
 class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
 
     def has_permission(self, request, view):
