@@ -4,5 +4,5 @@ from user.models import User
 from user.serializers import UserSerializer
 
 
-class CreateUserView(generics.GenericAPIView):
+class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
