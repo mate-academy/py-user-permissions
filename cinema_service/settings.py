@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "cinema",
     "user",
+    "rest_framework.authtoken"
 ]
 
 MIDDLEWARE = [
