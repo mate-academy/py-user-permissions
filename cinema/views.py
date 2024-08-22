@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db.models import F, Count
-from rest_framework.authentication import TokenAuthentication
+from rest_framework import viewsets
 from rest_framework.mixins import (
     ListModelMixin,
     CreateModelMixin,
@@ -8,7 +8,7 @@ from rest_framework.mixins import (
 )
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.viewsets import GenericViewSet
 
 from cinema.models import (
     Genre,
@@ -34,30 +34,29 @@ from cinema.serializers import (
 )
 
 
-class GenreViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
+class GenreViewSet(ListModelMixin, CreateModelMixin, GenericViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
-class ActorViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
+class ActorViewSet(ListModelMixin, CreateModelMixin, GenericViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
 
-class CinemaHallViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
+class CinemaHallViewSet(ListModelMixin, CreateModelMixin, GenericViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
 
 class MovieViewSet(
-    GenericViewSet,
     ListModelMixin,
     CreateModelMixin,
     RetrieveModelMixin,
+    GenericViewSet,
 ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    authentication_classes = (TokenAuthentication,)
 
     @staticmethod
     def _params_to_ints(qs):
@@ -95,7 +94,7 @@ class MovieViewSet(
         return MovieSerializer
 
 
-class MovieSessionViewSet(ModelViewSet):
+class MovieSessionViewSet(viewsets.ModelViewSet):
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
@@ -137,7 +136,7 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
+class OrderViewSet(ListModelMixin, CreateModelMixin, GenericViewSet):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
