@@ -25,7 +25,6 @@ class PublicUserApiTests(TestCase):
         """Test creating user with valid payload is successful"""
         payload = {
             "username": "test1user",
-            "email": "tes1t@test.com",
             "password": "testpass",
         }
 
@@ -40,7 +39,6 @@ class PublicUserApiTests(TestCase):
         """Test creating a user that already exists fails"""
         payload = {
             "username": "testuser",
-            "email": "test@test.com",
             "password": "testpass",
         }
         create_user(**payload)
@@ -53,14 +51,13 @@ class PublicUserApiTests(TestCase):
         """Test that the password must be more than 5 characters"""
         payload = {
             "username": "testuser",
-            "email": "test@test.com",
             "password": "tst",
         }
         res = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         user_exists = (
-            get_user_model().objects.filter(email=payload["email"]).exists()
+            get_user_model().objects.exists()
         )
         self.assertFalse(user_exists)
 
@@ -68,10 +65,9 @@ class PublicUserApiTests(TestCase):
         """Test that a token is created for the user"""
         payload = {
             "username": "test",
-            "email": "test@test.com",
             "password": "test123",
         }
-        create_user(**payload)
+        create_user(username="test", email="test@test.com", password="test123")
 
         res = self.client.post(TOKEN_URL, payload)
         self.assertIn("token", res.data)
