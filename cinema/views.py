@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -29,25 +29,39 @@ class AuthenticationAndPermissionMixin:
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-class GenreViewSet(AuthenticationAndPermissionMixin, viewsets.ModelViewSet):
+class GenreViewSet(
+    AuthenticationAndPermissionMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
-class ActorViewSet(AuthenticationAndPermissionMixin, viewsets.ModelViewSet):
+class ActorViewSet(
+    AuthenticationAndPermissionMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
 
 class CinemaHallViewSet(
     AuthenticationAndPermissionMixin,
-    viewsets.ModelViewSet
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
 ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
 
-class MovieViewSet(AuthenticationAndPermissionMixin, viewsets.ModelViewSet):
+class MovieViewSet(
+    AuthenticationAndPermissionMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
 
@@ -89,7 +103,11 @@ class MovieViewSet(AuthenticationAndPermissionMixin, viewsets.ModelViewSet):
 
 class MovieSessionViewSet(
     AuthenticationAndPermissionMixin,
-    viewsets.ModelViewSet
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
 ):
     queryset = (
         MovieSession.objects.all()
@@ -132,7 +150,11 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(AuthenticationAndPermissionMixin, viewsets.ModelViewSet):
+class OrderViewSet(
+    AuthenticationAndPermissionMixin,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
@@ -153,5 +175,5 @@ class OrderViewSet(AuthenticationAndPermissionMixin, viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == "create":
-            return (IsAuthenticated,)
+            return (IsAuthenticated(),)
         return super().get_permissions()
