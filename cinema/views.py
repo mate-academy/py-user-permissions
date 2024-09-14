@@ -31,6 +31,7 @@ class AuthenticationAndPermissionMixin:
 
 class GenreViewSet(
     AuthenticationAndPermissionMixin,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
@@ -40,6 +41,7 @@ class GenreViewSet(
 
 class ActorViewSet(
     AuthenticationAndPermissionMixin,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
@@ -49,6 +51,7 @@ class ActorViewSet(
 
 class CinemaHallViewSet(
     AuthenticationAndPermissionMixin,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
@@ -58,6 +61,7 @@ class CinemaHallViewSet(
 
 class MovieViewSet(
     AuthenticationAndPermissionMixin,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
@@ -103,6 +107,7 @@ class MovieViewSet(
 
 class MovieSessionViewSet(
     AuthenticationAndPermissionMixin,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
@@ -152,6 +157,7 @@ class OrderPagination(PageNumberPagination):
 
 class OrderViewSet(
     AuthenticationAndPermissionMixin,
+    viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
