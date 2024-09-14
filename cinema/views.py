@@ -24,43 +24,37 @@ from cinema.serializers import (
 )
 
 
-class AuthenticationAndPermissionMixin:
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-
-
 class GenreViewSet(
-    AuthenticationAndPermissionMixin,
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly,]
 
 
 class ActorViewSet(
-    AuthenticationAndPermissionMixin,
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly,]
 
 
 class CinemaHallViewSet(
-    AuthenticationAndPermissionMixin,
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
 ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly, ]
 
 
 class MovieViewSet(
-    AuthenticationAndPermissionMixin,
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -68,6 +62,7 @@ class MovieViewSet(
 ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly,]
 
     @staticmethod
     def _params_to_ints(qs):
@@ -106,7 +101,6 @@ class MovieViewSet(
 
 
 class MovieSessionViewSet(
-    AuthenticationAndPermissionMixin,
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -124,6 +118,7 @@ class MovieSessionViewSet(
         )
     )
     serializer_class = MovieSessionSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly,]
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -156,7 +151,6 @@ class OrderPagination(PageNumberPagination):
 
 
 class OrderViewSet(
-    AuthenticationAndPermissionMixin,
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -166,6 +160,7 @@ class OrderViewSet(
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly,]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
