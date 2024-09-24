@@ -25,25 +25,21 @@ from cinema.serializers import (
 class GenreListCreateView(generics.ListCreateAPIView):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class ActorListCreateView(generics.ListCreateAPIView):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class CinemaHallListCreateView(generics.ListCreateAPIView):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class MovieListCreateView(generics.ListCreateAPIView):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     @staticmethod
     def _params_to_ints(qs):
@@ -81,7 +77,6 @@ class MovieListCreateView(generics.ListCreateAPIView):
 class MovieRetrieveView(generics.RetrieveAPIView):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         serializer = self.serializer_class
@@ -103,7 +98,6 @@ class MovieSessionListCreateView(generics.ListCreateAPIView):
         )
     )
     serializer_class = MovieSessionSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -132,7 +126,6 @@ class MovieSessionRetrieveUpdateDestroyView(
 ):
     queryset = MovieSession.objects.select_related("movie", "cinema_hall")
     serializer_class = MovieSessionSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_serializer_class(self):
         if self.request.method == "GET":
