@@ -34,6 +34,7 @@ class GenreViewSet(
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminAllORAuthenticatedORReadOnly,)
 
+
 class ActorViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
