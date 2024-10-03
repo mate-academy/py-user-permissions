@@ -1,12 +1,11 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from rest_framework import generics
+from rest_framework import generics, viewsets, mixins
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
 from cinema.serializers import (
     GenreSerializer,
     ActorSerializer,
@@ -22,22 +21,39 @@ from cinema.serializers import (
 )
 
 
-class GenreListCreateView(generics.ListCreateAPIView):
+class GenreListCreateViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
-class ActorListCreateView(generics.ListCreateAPIView):
+class ActorListCreateViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
 
-class CinemaHallListCreateView(generics.ListCreateAPIView):
+class CinemaHallListCreateView(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
 
-class MovieListCreateView(generics.ListCreateAPIView):
+class MovieListCreateRetrieveViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
 
@@ -68,33 +84,31 @@ class MovieListCreateView(generics.ListCreateAPIView):
         return queryset.distinct()
 
     def get_serializer_class(self):
-        if self.request.method == "GET":
-            return MovieListSerializer
-
-        return MovieSerializer
-
-
-class MovieRetrieveView(generics.RetrieveAPIView):
-    queryset = Movie.objects.prefetch_related("genres", "actors")
-    serializer_class = MovieSerializer
-
-    def get_serializer_class(self):
         serializer = self.serializer_class
 
-        if self.request.method == "GET":
+        if self.action == "list":
+            serializer = MovieListSerializer
+        elif self.action == "retrieve":
             serializer = MovieDetailSerializer
 
         return serializer
 
 
-class MovieSessionListCreateView(generics.ListCreateAPIView):
+class MovieSessionListCreateUpdateDeleteViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
         .annotate(
-            tickets_available=F("cinema_hall__rows")
-            * F("cinema_hall__seats_in_row")
-            - Count("tickets")
+            tickets_available=(F("cinema_hall__rows")
+                               * F("cinema_hall__seats_in_row")
+                               - Count("tickets"))
         )
     )
     serializer_class = MovieSessionSerializer
@@ -115,23 +129,14 @@ class MovieSessionListCreateView(generics.ListCreateAPIView):
         return queryset
 
     def get_serializer_class(self):
-        if self.request.method == "GET":
-            return MovieSessionListSerializer
+        serializer = self.serializer_class
 
-        return MovieSessionSerializer
+        if self.action == "list":
+            serializer = MovieSessionListSerializer
+        elif self.action == "retrieve":
+            serializer = MovieSessionDetailSerializer
 
-
-class MovieSessionRetrieveUpdateDestroyView(
-    generics.RetrieveUpdateDestroyAPIView
-):
-    queryset = MovieSession.objects.select_related("movie", "cinema_hall")
-    serializer_class = MovieSessionSerializer
-
-    def get_serializer_class(self):
-        if self.request.method == "GET":
-            return MovieSessionDetailSerializer
-
-        return MovieSessionSerializer
+        return serializer
 
 
 class OrderPagination(PageNumberPagination):
@@ -139,7 +144,11 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderListCreateView(generics.ListCreateAPIView):
+class OrderListCreateViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    viewsets.GenericViewSet
+):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie",
         "tickets__movie_session__cinema_hall"

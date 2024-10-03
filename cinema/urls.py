@@ -1,42 +1,27 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 
 from cinema.views import (
-    GenreListCreateView,
-    ActorListCreateView,
+    GenreListCreateViewSet,
+    ActorListCreateViewSet,
     CinemaHallListCreateView,
-    MovieListCreateView,
-    MovieSessionListCreateView,
-    MovieSessionRetrieveUpdateDestroyView,
-    OrderListCreateView,
-    MovieRetrieveView,
+    MovieListCreateRetrieveViewSet,
+    MovieSessionListCreateUpdateDeleteViewSet,
+    OrderListCreateViewSet,
 )
 
 
+router = routers.DefaultRouter()
+
+router.register("genres", GenreListCreateViewSet)
+router.register("actors", ActorListCreateViewSet)
+router.register("cinema_halls", CinemaHallListCreateView)
+router.register("movies", MovieListCreateRetrieveViewSet)
+router.register("movie_sessions", MovieSessionListCreateUpdateDeleteViewSet)
+router.register("orders", OrderListCreateViewSet)
+
 urlpatterns = [
-    path("genres/", GenreListCreateView.as_view(), name="genre-list"),
-    path("actors/", ActorListCreateView.as_view(), name="actor-list"),
-    path(
-        "cinema_halls/",
-        CinemaHallListCreateView.as_view(),
-        name="cinemahall-list"
-    ),
-    path("movies/", MovieListCreateView.as_view(), name="movie-list"),
-    path("movies/<int:pk>", MovieRetrieveView.as_view(), name="movie-detail"),
-    path(
-        "movie_sessions/",
-        MovieSessionListCreateView.as_view(),
-        name="moviesession-list"
-    ),
-    path(
-        "movie_sessions/<int:pk>",
-        MovieSessionRetrieveUpdateDestroyView.as_view(),
-        name="moviesession-detail"
-    ),
-    path(
-        "orders",
-        OrderListCreateView.as_view(),
-        name="order-list"
-    ),
+    path("", include(router.urls)),
 ]
 
 app_name = "cinema"
