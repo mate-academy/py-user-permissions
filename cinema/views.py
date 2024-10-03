@@ -31,7 +31,6 @@ from cinema.serializers import (
 )
 
 
-
 class GenreViewSet(
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
