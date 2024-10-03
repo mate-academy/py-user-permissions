@@ -29,6 +29,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
+
 class ActorViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
@@ -41,6 +42,7 @@ class CinemaHallViewSet(viewsets.ModelViewSet):
     serializer_class = CinemaHallSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
@@ -97,7 +99,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
     serializer_class = MovieSessionSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
-
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
