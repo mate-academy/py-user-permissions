@@ -24,40 +24,43 @@ from cinema.serializers import (
 )
 
 
-class GenreViewSet(mixins.ListModelMixin,
+class GenreViewSet(
+    mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    viewsets.GenericViewSet):
+    viewsets.GenericViewSet
+):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
-
-class ActorViewSet(mixins.ListModelMixin,
+class ActorViewSet(
+    mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    viewsets.GenericViewSet):
+    viewsets.GenericViewSet
+):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
 
-class CinemaHallViewSet(mixins.ListModelMixin,
+class CinemaHallViewSet(
+    mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    viewsets.GenericViewSet):
+    viewsets.GenericViewSet
+):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
 
-
-
-class MovieViewSet(mixins.ListModelMixin,
+class MovieViewSet(
+    mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet):
+    viewsets.GenericViewSet,
+):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-
-
 
     @staticmethod
     def _params_to_ints(qs):
@@ -108,9 +111,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-
-
-
     def get_queryset(self):
         date = self.request.query_params.get("date")
         movie_id_str = self.request.query_params.get("movie")
@@ -141,16 +141,17 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(mixins.ListModelMixin,
+class OrderViewSet(
+    mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    viewsets.GenericViewSet):
+    viewsets.GenericViewSet
+):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
     permission_classes = (IsAuthenticated,)
-
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -163,5 +164,3 @@ class OrderViewSet(mixins.ListModelMixin,
             return OrderListSerializer
 
         return OrderSerializer
-
-
