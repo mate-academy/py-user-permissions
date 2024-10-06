@@ -147,4 +147,3 @@ REST_FRAMEWORK = {
         "user.permissions.IsAdminOrIfAuthenticatedReadOnly",
     ],
 }
-
