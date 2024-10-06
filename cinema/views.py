@@ -28,6 +28,7 @@ from cinema.serializers import (
     OrderListSerializer, MovieSessionDetailSerializer,
 )
 
+
 class GenreViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
