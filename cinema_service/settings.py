@@ -35,6 +35,14 @@ INTERNAL_IPS = [
 
 # Application definition
 
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "cinema_service.permissions.IsAdminOrIfAuthenticatedReadOnly",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
 
 INSTALLED_APPS = [
     "django.contrib.admin",
