@@ -29,6 +29,7 @@ class GenreViewSet(viewsets.ModelViewSet):
 class ActorViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
+    #  permission_classes =
 
 
 class CinemaHallViewSet(viewsets.ModelViewSet):
