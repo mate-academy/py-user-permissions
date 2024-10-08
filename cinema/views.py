@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.db.models import F, Count
 from rest_framework import viewsets, mixins
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
@@ -14,7 +13,6 @@ from cinema.models import (
     MovieSession,
     Order
 )
-from user.permissions import IsAdminOrIfAuthenticatedReadOnly
 from cinema.serializers import (
     GenreSerializer,
     ActorSerializer,
@@ -25,7 +23,8 @@ from cinema.serializers import (
     MovieDetailSerializer,
     MovieListSerializer,
     OrderSerializer,
-    OrderListSerializer, MovieSessionDetailSerializer,
+    OrderListSerializer,
+    MovieSessionDetailSerializer,
 )
 
 
