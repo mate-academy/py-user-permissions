@@ -3,14 +3,6 @@ from django.contrib.auth import get_user_model
 
 
 class UserSerializer(serializers.ModelSerializer):
-    def validate(self, attrs):
-        data = super(UserSerializer, self).validate(attrs)
-        get_user_model().validate_password(
-            attrs["password"],
-            serializers.ValidationError
-        )
-        return data
-
     class Meta:
         model = get_user_model()
         fields = ("id", "username", "email", "password", "is_staff")
