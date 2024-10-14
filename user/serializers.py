@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         data = super(UserSerializer, self).validate(attrs)
         get_user_model().validate_password(
-            attrs["password"]
+            attrs["password"],
+            serializers.ValidationError
         )
         return data
 
