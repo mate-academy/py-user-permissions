@@ -2,4 +2,9 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    pass
+    @staticmethod
+    def validate_password(password: str):
+        if len(password) < 5:
+            raise ValueError("Password "+
+                                 "must be more than or"+
+                                 " or queal to 5 symbols")
