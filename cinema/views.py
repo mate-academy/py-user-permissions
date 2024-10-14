@@ -112,7 +112,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
     )
     serializer_class = MovieSessionSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    http_method_names = ['get', 'post', 'put', 'patch', 'delete'] 
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
