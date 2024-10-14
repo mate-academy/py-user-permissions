@@ -6,7 +6,5 @@ class User(AbstractUser):
     def validate_password(password: str):
         if len(password) < 5:
             raise ValueError(
-                "Password " +
-                " must be more than or" +
-                " or queal to 5 symbols"
+                "Password must be more than or equal to 5 symbols."
             )
