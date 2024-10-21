@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 
 from rest_framework import authentication
+from rest_framework.authentication import TokenAuthentication
 
 from user.permissions import IsAdminOrIfAuthenticatedReadOnly
 
@@ -143,6 +144,10 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (authentication.TokenAuthentication,),
-    "DEFAULT_PERMISSION_CLASSES": (IsAdminOrIfAuthenticatedReadOnly, )
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "user.permissions.IsAdminOrIfAuthenticatedReadOnly",
+    ]
 }
