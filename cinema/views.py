@@ -33,29 +33,21 @@ from cinema.serializers import (
 class GenreViewSet(CreateModelMixin, GenericViewSet, ListModelMixin):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = [user.permissions.IsAdminOrIfAuthenticatedReadOnly]
-    authentication_classes = (authentication.TokenAuthentication,)
 
 
 class ActorViewSet(CreateModelMixin, ListModelMixin, GenericViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
-    permission_classes = [user.permissions.IsAdminOrIfAuthenticatedReadOnly]
-    authentication_classes = (authentication.TokenAuthentication,)
 
 
 class CinemaHallViewSet(CreateModelMixin, ListModelMixin, GenericViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
-    permission_classes = [user.permissions.IsAdminOrIfAuthenticatedReadOnly]
-    authentication_classes = (authentication.TokenAuthentication,)
 
 
 class MovieViewSet(ReadOnlyModelViewSet, CreateModelMixin, GenericViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
-    permission_classes = [user.permissions.IsAdminOrIfAuthenticatedReadOnly]
-    authentication_classes = (authentication.TokenAuthentication,)
 
     @staticmethod
     def _params_to_ints(qs):
@@ -104,8 +96,6 @@ class MovieSessionViewSet(ModelViewSet):
         )
     )
     serializer_class = MovieSessionSerializer
-    permission_classes = [user.permissions.IsAdminOrIfAuthenticatedReadOnly]
-    authentication_classes = (authentication.TokenAuthentication,)
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -144,7 +134,6 @@ class OrderViewSet(ListModelMixin, CreateModelMixin, GenericViewSet,):
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
     permission_classes = [IsAuthenticated]
-    authentication_classes = (authentication.TokenAuthentication,)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
