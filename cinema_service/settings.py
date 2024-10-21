@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 
 from rest_framework import authentication
-from rest_framework.authentication import TokenAuthentication
 
 from user.permissions import IsAdminOrIfAuthenticatedReadOnly
 

@@ -1,11 +1,9 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from rest_framework import viewsets, status, authentication
 from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.viewsets import (
     GenericViewSet,
     ReadOnlyModelViewSet,
