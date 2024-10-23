@@ -26,13 +26,15 @@ class ActorViewSet(ModelViewSet):
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
-    page_size_query_param = "page_size
+    page_size_query_param = "page_size"
     max_page_size = 100
 
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+    pagination_class = StandardResultsSetPagination
+    permission_classes = [IsAuthenticated]
 
 
 class MovieSessionViewSet(ModelViewSet):
