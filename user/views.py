@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 
 
-# User serializer for creating and updating user data
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
@@ -38,29 +37,6 @@ class CreateTokenView(ObtainAuthToken):
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
 
-# User serializer for creating and updating user data
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = get_user_model()
-        fields = ("id", "username", "email", "password", "is_staff")
-        read_only_fields = ("id", "is_staff")
-        extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
-
-    def create(self, validated_data):
-        return get_user_model().objects.create_user(**validated_data)
-
-    def update(self, instance, validated_data):
-        password = validated_data.pop("password", None)
-        user = super().update(instance, validated_data)
-
-        if password:
-            user.set_password(password)
-            user.save()
-
-        return user
-
-
-# Manage user view for updating user information
 class ManageUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication,)
