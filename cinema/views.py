@@ -1,5 +1,7 @@
 from rest_framework import viewsets
-from cinema.serializers import MovieSerializer, CinemaHallSerializer, ActorSerializer
+from cinema.serializers import (MovieSerializer,
+                                CinemaHallSerializer,
+                                ActorSerializer)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from user.permissions import IsAdminOrIfAuthenticatedReadOnly
@@ -24,7 +26,7 @@ class ActorViewSet(ModelViewSet):
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
-    page_size_query_param = 'page_size'
+    page_size_query_param = "page_size
     max_page_size = 100
 
 
