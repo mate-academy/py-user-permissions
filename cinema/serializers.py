@@ -1,3 +1,5 @@
+import logging
+
 from django.db import transaction
 from rest_framework import serializers
 
@@ -10,6 +12,9 @@ from cinema.models import (
     Ticket,
     Order,
 )
+
+
+logger = logging.getLogger("cinema.serializers")
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -150,27 +155,29 @@ class OrderSerializer(serializers.ModelSerializer):
             return order
 
     def update(self, instance, validated_data):
-        tickets_data = validated_data.pop("tickets")
+        tickets_data = validated_data.get("tickets", [])
         instance = super().update(instance, validated_data)
 
         keep_tickets = []
         for ticket_data in tickets_data:
             if "id" in ticket_data.keys():
-                if Ticket.objects.filter(id=ticket_data["id"]).exists():
+                try:
                     ticket = Ticket.objects.get(id=ticket_data["id"])
+                except Ticket.DoesNotExist as e:
+                    logger.error(
+                        f"Ticket with ID {ticket_data["id"]} \
+                            does not exist: {e}")
+                    continue
+                else:
                     ticket.row = ticket_data.get("row", ticket.row)
                     ticket.seat = ticket_data.get("seat", ticket.seat)
                     ticket.save()
                     keep_tickets.append(ticket.id)
-                else:
-                    continue
             else:
                 ticket = Ticket.objects.create(order=instance, **ticket_data)
                 keep_tickets.append(ticket.id)
 
-        for ticket in instance.tickets.all():
-            if ticket.id not in keep_tickets:
-                ticket.delete()
+        instance.tickets.exclude(id__in=keep_tickets).delete()
 
         return instance
 
