@@ -165,8 +165,8 @@ class OrderSerializer(serializers.ModelSerializer):
                     ticket = Ticket.objects.get(id=ticket_data["id"])
                 except Ticket.DoesNotExist as e:
                     logger.error(
-                        f"Ticket with ID {ticket_data["id"]} \
-                            does not exist: {e}")
+                        f"Ticket with ID {ticket_data["id"]} "
+                        f"does not exist: {e}")
                     continue
                 else:
                     ticket.row = ticket_data.get("row", ticket.row)
