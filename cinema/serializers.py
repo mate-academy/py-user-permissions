@@ -1,5 +1,3 @@
-import logging
-
 from django.db import transaction
 from rest_framework import serializers
 
@@ -12,9 +10,6 @@ from cinema.models import (
     Ticket,
     Order,
 )
-
-
-logger = logging.getLogger("cinema.serializers")
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -163,10 +158,7 @@ class OrderSerializer(serializers.ModelSerializer):
             if "id" in ticket_data.keys():
                 try:
                     ticket = Ticket.objects.get(id=ticket_data["id"])
-                except Ticket.DoesNotExist as e:
-                    logger.error(
-                        f"Ticket with ID {ticket_data.get("id")} "
-                        f"does not exist: {e}")
+                except Ticket.DoesNotExist:
                     continue
                 else:
                     ticket.row = ticket_data.get("row", ticket.row)
