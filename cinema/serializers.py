@@ -33,7 +33,14 @@ class CinemaHallSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
-        fields = ("id", "title", "description", "duration", "genres", "actors")
+        fields = (
+            "id",
+            "title",
+            "description",
+            "duration",
+            "genres",
+            "actors"
+        )
 
 
 class MovieListSerializer(MovieSerializer):
@@ -51,7 +58,14 @@ class MovieDetailSerializer(MovieSerializer):
 
     class Meta:
         model = Movie
-        fields = ("id", "title", "description", "duration", "genres", "actors")
+        fields = (
+            "id",
+            "title",
+            "description",
+            "duration",
+            "genres",
+            "actors"
+        )
 
 
 class MovieSessionSerializer(serializers.ModelSerializer):
@@ -83,10 +97,13 @@ class MovieSessionListSerializer(MovieSessionSerializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
-    def validate(self, attrs):
+    def validate(self, attrs) -> dict:
         data = super(TicketSerializer, self).validate(attrs=attrs)
         Ticket.validate_ticket(
-            attrs["row"], attrs["seat"], attrs["movie_session"]
+            attrs["row"],
+            attrs["seat"],
+            attrs["movie_session"].cinema_hall,
+            serializers.ValidationError,
         )
         return data
 
@@ -131,6 +148,30 @@ class OrderSerializer(serializers.ModelSerializer):
             for ticket_data in tickets_data:
                 Ticket.objects.create(order=order, **ticket_data)
             return order
+
+    def update(self, instance, validated_data):
+        tickets_data = validated_data.get("tickets", [])
+        instance = super().update(instance, validated_data)
+
+        keep_tickets = []
+        for ticket_data in tickets_data:
+            if "id" in ticket_data.keys():
+                try:
+                    ticket = Ticket.objects.get(id=ticket_data["id"])
+                except Ticket.DoesNotExist:
+                    continue
+                else:
+                    ticket.row = ticket_data.get("row", ticket.row)
+                    ticket.seat = ticket_data.get("seat", ticket.seat)
+                    ticket.save()
+                    keep_tickets.append(ticket.id)
+            else:
+                ticket = Ticket.objects.create(order=instance, **ticket_data)
+                keep_tickets.append(ticket.id)
+
+        instance.tickets.exclude(id__in=keep_tickets).delete()
+
+        return instance
 
 
 class OrderListSerializer(OrderSerializer):
