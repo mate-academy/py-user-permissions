@@ -1,6 +1,4 @@
 from django.urls import path
-
-# from cinema.urls import urlpatterns, app_name
 from user.views import CreateUserView, CreateTokenView, ManageUserView
 
 urlpatterns = [
