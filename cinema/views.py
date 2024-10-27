@@ -3,7 +3,7 @@ from django.db.models import F, Count
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from cinema.permissions import IsAdminOrAuthenticatedReadOnly
+from cinema.permissions import IsAdminOrIsAuthenticatedReadOnly
 from rest_framework.pagination import PageNumberPagination
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 
@@ -27,7 +27,7 @@ class BaseViewSet(
     viewsets.GenericViewSet
 ):
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrAuthenticatedReadOnly,)
+    permission_classes = (IsAdminOrIsAuthenticatedReadOnly,)
 
 
 class GenreViewSet(BaseViewSet):
@@ -49,7 +49,7 @@ class MovieViewSet(BaseViewSet, mixins.RetrieveModelMixin):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrAuthenticatedReadOnly,)
+    permission_classes = (IsAdminOrIsAuthenticatedReadOnly,)
 
     @staticmethod
     def _params_to_ints(qs):
@@ -99,7 +99,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
     )
     serializer_class = MovieSessionSerializer
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrAuthenticatedReadOnly,)
+    permission_classes = (IsAdminOrIsAuthenticatedReadOnly,)
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
