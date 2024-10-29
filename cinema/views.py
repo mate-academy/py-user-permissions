@@ -34,7 +34,7 @@ class GenreViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "create"):
             permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
         else:
-            raise NotFound("Method not allowed")
+            raise MethodNotAllowed(self.request.method)
         return [permission() for permission in permission_classes]
 
 
@@ -47,7 +47,7 @@ class ActorViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "create"):
             permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
         else:
-            raise NotFound("Method not allowed")
+            raise MethodNotAllowed(self.request.method)
         return [permission() for permission in permission_classes]
 
 
@@ -60,7 +60,7 @@ class CinemaHallViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "create"):
             permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
         else:
-            raise NotFound("Method not allowed")
+            raise MethodNotAllowed(self.request.method)
         return [permission() for permission in permission_classes]
 
 
@@ -72,10 +72,8 @@ class MovieViewSet(viewsets.ModelViewSet):
     def get_permissions(self) -> list:
         if self.action in ("list", "create", "retrieve"):
             permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
-        elif self.action in ("update", "partial_update", "destroy"):
-            raise MethodNotAllowed(self.request.method)
         else:
-            permission_classes = []
+            raise MethodNotAllowed(self.request.method)
         return [permission() for permission in permission_classes]
 
     @staticmethod
@@ -170,7 +168,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "create"):
             permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
         else:
-            raise NotFound("Method not allowed")
+            raise MethodNotAllowed(self.request.method)
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
