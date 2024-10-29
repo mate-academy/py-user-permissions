@@ -11,4 +11,3 @@ class IsAdminOrIsAuthenticatedReadOnly(BasePermission):
             )
             or (request.user and request.user.is_staff)
         )
-# Update permission
