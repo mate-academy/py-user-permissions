@@ -169,7 +169,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
             "retrieve",
             "update",
             "partial_update",
-            "delete",
+            "destroy",
         ]:
             permission_classes = [
                 ReadAndCreate,
@@ -209,6 +209,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.action in [
             "create",
             "list",
+            "retrieve"
         ]:
             permission_classes = [
                 ReadAndCreate,
