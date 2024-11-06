@@ -51,12 +51,6 @@ class CinemaHallViewSet(
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
-    def get_permissions(self):
-        if self.action in ("retrieve", "destroy"):
-            return (IsAdminUser(),)
-
-        return super().get_permissions()
-
 
 class MovieViewSet(
     mixins.ListModelMixin,
