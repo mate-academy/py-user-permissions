@@ -163,14 +163,11 @@ class OrderViewSet(viewsets.ModelViewSet):
     pagination_class = OrderPagination
     authentication_classes = (TokenAuthentication,)
 
-    def get_permissions(self):
+    def get_permissions(self) -> list:
         if self.action in ("list", "create"):
-            permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
-        elif self.action in ("retrieve", "update", "destroy"):
             permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
         else:
             raise NotFound("Method not allowed for this resource")
-
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
