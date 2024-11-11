@@ -26,13 +26,11 @@ from cinema.serializers import (
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly, )
+    permission_classes = (IsAdminUser(), )
 
     def get_permissions(self):
         if self.action in ("list", "create"):
             return (IsAdminOrIfAuthenticatedReadOnly(), )
-        else:
-            return (IsAdminUser(), )
 
 
 class ActorViewSet(viewsets.ModelViewSet):
