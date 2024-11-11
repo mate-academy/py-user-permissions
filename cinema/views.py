@@ -32,7 +32,7 @@ class GenreViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "create"):
             return (IsAdminOrIfAuthenticatedReadOnly(), )
         else:
-            return (IsAdminUser, )
+            return (IsAdminUser(), )
 
 
 class ActorViewSet(viewsets.ModelViewSet):
