@@ -4,7 +4,7 @@ from django.db.models import F, Count
 
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
@@ -32,7 +32,7 @@ class GenreViewSet(viewsets.ModelViewSet):
         if self.action in ("list", "create"):
             return (IsAdminOrIfAuthenticatedReadOnly(), )
         else:
-            return None
+            return (IsAdminUser, )
 
 
 class ActorViewSet(viewsets.ModelViewSet):
