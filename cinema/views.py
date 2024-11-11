@@ -1,15 +1,9 @@
 from datetime import datetime
-
+from django.utils import timezone
 from django.db.models import F, Count
 from rest_framework import mixins, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.viewsets import (
-    GenericViewSet,
-    ReadOnlyModelViewSet,
-    ModelViewSet
-)
-
 
 from cinema.models import (
     Genre,
@@ -19,7 +13,6 @@ from cinema.models import (
     MovieSession,
     Order
 )
-
 from cinema.serializers import (
     GenreSerializer,
     ActorSerializer,
@@ -40,14 +33,11 @@ class GenreViewSet(mixins.ListModelMixin,
                    viewsets.GenericViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        if self.action in ["create"]:
-            self.permission_classes = [IsAdminUser]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
+        if self.action == "create":
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
 
 
 class ActorViewSet(mixins.ListModelMixin,
@@ -55,14 +45,11 @@ class ActorViewSet(mixins.ListModelMixin,
                    viewsets.GenericViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        if self.action in ["create"]:
-            self.permission_classes = [IsAdminUser]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
+        if self.action == "create":
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
 
 
 class CinemaHallViewSet(mixins.ListModelMixin,
@@ -70,28 +57,23 @@ class CinemaHallViewSet(mixins.ListModelMixin,
                         viewsets.GenericViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        if self.action in ["create"]:
-            self.permission_classes = [IsAdminUser]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
+        if self.action == "create":
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
 
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ["get", "post"]
+    http_method_names = ["get", "post", "patch"]
 
     def get_permissions(self):
         if self.action in ["create", "update", "partial_update", "destroy"]:
-            self.permission_classes = [IsAdminUser]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
 
     @staticmethod
     def _params_to_ints(qs):
@@ -122,10 +104,8 @@ class MovieViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "list":
             return MovieListSerializer
-
         if self.action == "retrieve":
             return MovieDetailSerializer
-
         return MovieSerializer
 
 
@@ -140,21 +120,18 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = MovieSessionSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
         if self.action in ["create", "update", "partial_update", "destroy"]:
-            self.permission_classes = [IsAdminUser]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
         movie_id_str = self.request.query_params.get("movie")
         queryset = self.queryset
         if date:
-            date = datetime.strptime(date, "%Y-%m-%d").date()
+            date = timezone.make_aware(datetime.strptime(date, "%Y-%m-%d"))
             queryset = queryset.filter(show_time__date=date)
         if movie_id_str:
             queryset = queryset.filter(movie_id=int(movie_id_str))
@@ -171,7 +148,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
 class OrderPagination(PageNumberPagination):
     page_size = 10
     max_page_size = 100
-    permission_classes = (IsAuthenticated,)
 
 
 class OrderViewSet(mixins.ListModelMixin,
@@ -190,7 +166,6 @@ class OrderViewSet(mixins.ListModelMixin,
     def get_serializer_class(self):
         if self.action == "list":
             return OrderListSerializer
-
         return OrderSerializer
 
     def perform_create(self, serializer):
