@@ -135,8 +135,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
 class OrderPagination(PageNumberPagination):
     page_size = 10
     max_page_size = 100
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class OrderViewSet(viewsets.ModelViewSet):
