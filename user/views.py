@@ -19,7 +19,6 @@ class LoginUserView(ObtainAuthToken):
 class ManageUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication,)
-    # permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
     permission_classes = (IsAuthenticated,)
 
     def get_object(self):
