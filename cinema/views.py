@@ -64,13 +64,6 @@ class CinemaHallViewSet(
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-class MovieViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    GenericViewSet
-):
-    queryset = Movie.objects.prefetch_related("genres", "actors")
 
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
@@ -156,11 +149,7 @@ class OrderPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class OrderViewSet(
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    GenericViewSet
-):
+
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
