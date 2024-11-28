@@ -1,23 +1,22 @@
 from datetime import datetime
 
-from django.db.models import F, Count
+from django.db.models import Count, F
 from rest_framework import viewsets
-from rest_framework.pagination import PageNumberPagination
 
-from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-
+from cinema.models import Actor, CinemaHall, Genre, Movie, MovieSession, Order
+from cinema.pagination import OrderPagination
 from cinema.serializers import (
-    GenreSerializer,
     ActorSerializer,
     CinemaHallSerializer,
-    MovieSerializer,
-    MovieSessionSerializer,
-    MovieSessionListSerializer,
+    GenreSerializer,
     MovieDetailSerializer,
-    MovieSessionDetailSerializer,
     MovieListSerializer,
-    OrderSerializer,
+    MovieSerializer,
+    MovieSessionDetailSerializer,
+    MovieSessionListSerializer,
+    MovieSessionSerializer,
     OrderListSerializer,
+    OrderSerializer
 )
 
 
@@ -41,9 +40,9 @@ class MovieViewSet(viewsets.ModelViewSet):
     serializer_class = MovieSerializer
 
     @staticmethod
-    def _params_to_ints(qs):
+    def _params_to_ints(param_string):
         """Converts a list of string IDs to a list of integers"""
-        return [int(str_id) for str_id in qs.split(",")]
+        return [int(str_id) for str_id in param_string.split(",")]
 
     def get_queryset(self):
         """Retrieve the movies with filters"""
@@ -111,11 +110,6 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
             return MovieSessionDetailSerializer
 
         return MovieSessionSerializer
-
-
-class OrderPagination(PageNumberPagination):
-    page_size = 10
-    max_page_size = 100
 
 
 class OrderViewSet(viewsets.ModelViewSet):
