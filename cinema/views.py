@@ -164,8 +164,5 @@ class OrderViewSet(mixins.ListModelMixin,
         serializer.save(user=self.request.user)
 
     def get_permissions(self):
-        if self.action == "create":
-            self.permission_classes = [IsAuthenticated]
-        else:
-            self.permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+        self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
