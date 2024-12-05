@@ -85,7 +85,6 @@ class AdminActorApiTests(TestCase):
         sample_actor()
 
         response = self.client.get(f"{ACTOR_URL}1/")
-
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_put_actor(self):
