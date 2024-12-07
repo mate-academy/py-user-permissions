@@ -3,7 +3,8 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
     """
-    The request is authenticated as a user, or is a read-only request.
+    Custom permission to only allow admins to edit an object,
+    while authenticated users can only read.
     """
 
     def has_permission(self, request, view):
