@@ -16,6 +16,7 @@ class LoginUserView(ObtainAuthToken):
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
     permission_classes = (AllowAny, )
 
+
 class ManagerUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication,)
