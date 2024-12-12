@@ -4,10 +4,11 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 logger = logging.getLogger(__name__)
 
+
 class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
     """
-    The request is authenticated as admin is a read/write (except delete) request, or
-    the request is authenticated a user is a read-only request.
+    Allows read/write access for admin users (except delete),
+    and read-only access for authenticated users.
     """
     def has_permission(self, request, view):
         try:
@@ -15,8 +16,8 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
                     view.action == "list" or (
                         view.action == "retrieve"
                         and view.__class__.__name__ in (
-                                "MovieViewSet",
-                                "MovieSessionViewSet"
+                            "MovieViewSet",
+                            "MovieSessionViewSet"
                         )
                     )
             ):
@@ -33,7 +34,5 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
             else:
                 return False
 
-        except AttributeError:
-            logger.error("Authentication credentials were not provided.")
-
-
+        except AttributeError as e:
+            logger.error(e)
