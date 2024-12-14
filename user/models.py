@@ -3,4 +3,5 @@ from django.db import models
 
 
 class User(AbstractUser):
-    is_staff = models.BooleanField()
+    pass
+
