@@ -11,4 +11,3 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
             )
             or (request.user and request.user.is_staff)
         )
-
