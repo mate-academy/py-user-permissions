@@ -56,7 +56,6 @@ class CinemaHallViewSet(
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
-
 class MovieViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
