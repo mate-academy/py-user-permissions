@@ -13,7 +13,6 @@ class CreateUserView(generics.CreateAPIView):
 
 class CreateTokenView(ObtainAuthToken):
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
-    pass
 
 
 class ManageUserView(generics.RetrieveUpdateAPIView):
