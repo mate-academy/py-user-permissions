@@ -13,10 +13,3 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
             )
             or (request.user and request.user.is_staff)
         )
-
-
-class ListAndCreateOnly(IsAdminOrIfAuthenticatedReadOnly):
-    def has_permission(self, request, view):
-        if view.action in ("list", "create"):
-            return True
-        super().has_permission(request, view)

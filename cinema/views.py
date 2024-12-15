@@ -6,6 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
+from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly
 
 from cinema.serializers import (
     GenreSerializer,
@@ -29,6 +30,7 @@ class GenreViewSet(
 ):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class ActorViewSet(
@@ -38,6 +40,7 @@ class ActorViewSet(
 ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class CinemaHallViewSet(
@@ -47,6 +50,7 @@ class CinemaHallViewSet(
 ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class MovieViewSet(
