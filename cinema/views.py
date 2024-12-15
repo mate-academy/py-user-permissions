@@ -23,6 +23,9 @@ from cinema.serializers import (
 )
 
 
+# -----GenreViewSets-----------------------------------------------------------
+
+
 class GenreViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -32,6 +35,9 @@ class GenreViewSet(
     serializer_class = GenreSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+
+# -----ActorViewSets-----------------------------------------------------------
 
 
 class ActorViewSet(
@@ -45,6 +51,9 @@ class ActorViewSet(
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
+# -----CinemaHallViewSets------------------------------------------------------
+
+
 class CinemaHallViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -54,6 +63,9 @@ class CinemaHallViewSet(
     serializer_class = CinemaHallSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+
+# -----MovieViewSets-----------------------------------------------------------
 
 
 class MovieViewSet(
@@ -103,6 +115,9 @@ class MovieViewSet(
         return MovieSerializer
 
 
+# -----MovieSessionViewSets----------------------------------------------------
+
+
 class MovieSessionViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -147,6 +162,9 @@ class MovieSessionViewSet(
             return MovieSessionDetailSerializer
 
         return MovieSessionSerializer
+
+
+# -----OrderViewSets-----------------------------------------------------------
 
 
 class OrderPagination(PageNumberPagination):
