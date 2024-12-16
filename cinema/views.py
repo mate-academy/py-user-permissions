@@ -60,8 +60,9 @@ class CinemaHallViewSet(
 
 
 class MovieViewSet(
-    ReadOnlyModelViewSet,
     mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
     GenericViewSet
 ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
