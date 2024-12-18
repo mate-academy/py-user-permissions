@@ -7,24 +7,34 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
     """
 
     def has_permission(self, request, view):
-        if request.method == "DELETE":
-            return False
         return bool(
-            (request.user and request.user.is_authenticated and
-             request.method in SAFE_METHODS) or
-            (request.user and request.user.is_staff)
+            (
+                request.user
+                and request.user.is_authenticated
+                and request.method in SAFE_METHODS
+            )
+            or (request.user and request.user.is_staff)
         )
 
 
-class IsAuthenticatedReadOrCreate(BasePermission):
+class OrderPermission(BasePermission):
     """
-    The user is authenticated and can create  read request.
+    The authenticated user can create. And only owner can observe
     """
 
     def has_permission(self, request, view):
 
         return bool(
-            request.method in SAFE_METHODS or
-            request.method == "POST" and
-            request.user.is_authenticated
+            (request.method == "POST" or request.method in SAFE_METHODS)
+            and request.user
+            and (request.user.is_authenticated or request.user.is_staff)
+        )
+
+    def has_object_permission(self, request, view, obj):
+
+        return bool(
+            request.user
+            and request.user.is_authenticated
+            and request.method in SAFE_METHODS
+            and request.user == obj.user
         )
