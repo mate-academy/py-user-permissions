@@ -14,17 +14,6 @@ from cinema.views import (
     # MovieSessionDetailView,
 )
 
-# router = routers.DefaultRouter()
-# router.register("genres", GenreViewSet)
-# router.register("actors", ActorViewSet)
-# router.register("cinema_halls", CinemaHallViewSet)
-# router.register('movies', MovieViewSet, basename='movies')
-# router.register("movie_sessions", MovieSessionViewSet)
-# router.register("orders", OrderViewSet)
-
-# urlpatterns = [path("", include(router.urls))]
-# movies = MovieViewSet.as_view({'get': 'list', "post": "create",})
-# movie = MovieViewSet.as_view({'get': 'retrieve'})
 
 movie_list = MovieViewSet.as_view({"get": "list", "post": "create"})
 movie_detail = MovieViewSet.as_view({"get": "retrieve"})

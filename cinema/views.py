@@ -163,16 +163,5 @@ class OrderViewSet(generics.ListCreateAPIView):
         if self.request.user:
             return Order.objects.filter(user=self.request.user)
 
-    # def get_serializer_class(self):
-    #     if self.action == "list":
-    #         return OrderListSerializer
-    #
-    #     return OrderSerializer
-
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-
-    # def get_object(self):
-    #     obj = get_object_or_404(self.queryset, pk=self.kwargs["pk"])
-    #     self.check_object_permissions(self.request, obj)
-    #     return obj
