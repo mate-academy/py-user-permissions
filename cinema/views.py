@@ -5,7 +5,7 @@ from rest_framework import mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.exceptions import PermissionDenied
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
@@ -98,14 +98,7 @@ class MovieViewSet(
         return MovieSerializer
 
 
-class MovieSessionViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
-    GenericViewSet,
-):
+class MovieSessionViewSet(ModelViewSet):
     queryset = (
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
@@ -187,7 +180,7 @@ class OrderViewSet(
 
     def get_permissions(self):
         if self.action == "create":
-            return (IsAuthenticated(),)
+            return [IsAuthenticated()]
         return super().get_permissions()
 
     def get_queryset(self):
