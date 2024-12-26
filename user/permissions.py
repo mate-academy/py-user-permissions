@@ -7,7 +7,8 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
         if request.user and request.user.is_staff:
             return True
 
-        # If the request is "read" (GET/HEAD/OPTIONS), then we allow authenticated
+        # If the request is "read" (GET/HEAD/OPTIONS),
+        # then we allow authenticated
         if request.method in SAFE_METHODS:
             return bool(request.user and request.user.is_authenticated)
 
