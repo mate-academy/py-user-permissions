@@ -12,5 +12,13 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return bool(request.user and request.user.is_authenticated)
 
+        # Allow POST to regular authenticated users
+        if (
+                request.method == "POST"
+                and request.user
+                and request.user.is_authenticated
+        ):
+            return True
+
         # Everything else (POST, PUT, PATCH, DELETE) is prohibited
         return False
