@@ -3,6 +3,7 @@ from datetime import datetime
 from django.db.models import F, Count
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
 
@@ -19,26 +20,47 @@ from cinema.serializers import (
     OrderSerializer,
     OrderListSerializer,
 )
+from user.permissions import IsAdminOrIfAuthenticatedReadOnly
 
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
+    def get_permissions(self):
+        if self.action in ("list", "create"):
+            return (IsAdminOrIfAuthenticatedReadOnly(),)
+        return (IsAuthenticated(),)
+
 
 class ActorViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
+
+    def get_permissions(self):
+        if self.action in ("list", "create"):
+            return (IsAdminOrIfAuthenticatedReadOnly(),)
+        return (IsAuthenticated(),)
 
 
 class CinemaHallViewSet(viewsets.ModelViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
 
+    def get_permissions(self):
+        if self.action in ("list", "create"):
+            return (IsAdminOrIfAuthenticatedReadOnly(),)
+        return (IsAuthenticated(),)
+
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
+
+    def get_permissions(self):
+        if self.action in ("list", "create", "retrieve"):
+            return (IsAdminOrIfAuthenticatedReadOnly(),)
+        return (IsAuthenticated(),)
 
     @staticmethod
     def _params_to_ints(qs):
@@ -82,11 +104,23 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         .select_related("movie", "cinema_hall")
         .annotate(
             tickets_available=F("cinema_hall__rows")
-            * F("cinema_hall__seats_in_row")
-            - Count("tickets")
+                              * F("cinema_hall__seats_in_row")
+                              - Count("tickets")
         )
     )
     serializer_class = MovieSessionSerializer
+
+    def get_permissions(self):
+        if self.action in (
+                "list",
+                "create",
+                "retrieve",
+                "update",
+                "partial_update",
+                "destroy"
+        ):
+            return (IsAdminOrIfAuthenticatedReadOnly(),)
+        return (IsAuthenticated(),)
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -124,6 +158,14 @@ class OrderViewSet(viewsets.ModelViewSet):
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
+
+    def get_permissions(self):
+        if self.action in (
+                "list",
+                "create"
+        ):
+            return (IsAdminOrIfAuthenticatedReadOnly(),)
+        return (IsAuthenticated(),)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
