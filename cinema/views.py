@@ -151,7 +151,6 @@ class OrderPagination(PageNumberPagination):
 class OrderViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
     queryset = Order.objects.prefetch_related(
