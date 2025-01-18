@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
+from django.utils.timezone import make_aware
+from datetime import datetime
 
 
 class CinemaHall(models.Model):

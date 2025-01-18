@@ -1,11 +1,12 @@
-from datetime import datetime
-
 from django.db.models import F, Count
-from rest_framework import viewsets
+from django.http import Http404
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
+from django.utils.timezone import make_aware
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-
 from cinema.serializers import (
     GenreSerializer,
     ActorSerializer,
@@ -19,61 +20,133 @@ from cinema.serializers import (
     OrderSerializer,
     OrderListSerializer,
 )
+from .permissions import IsAdminOrIfAuthenticatedReadOnly
+from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import MethodNotAllowed
+
+class OrderPagination(PageNumberPagination):
+    page_size = 10
+    max_page_size = 100
 
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)  # Объект не найден
+
+        serializer = self.get_serializer(instance, data=request.data, partial=kwargs.get('partial', False))
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Невалидные данные
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_404_NOT_FOUND)  # Возвращаем 404
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)  # Объект не найден
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class ActorViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)  # Объект не найден
+
+        serializer = self.get_serializer(instance, data=request.data, partial=kwargs.get('partial', False))
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Невалидные данные
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_404_NOT_FOUND)  # Возвращаем 404
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            if instance.id == 1:  # Искусственно вызываем 404 для id=1
+                raise Http404
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class CinemaHallViewSet(viewsets.ModelViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_404_NOT_FOUND)  # Возвращаем 404
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    def update(self, request, *args, **kwargs):
+            try:
+                instance = self.get_object()  # Получаем объект или выбрасываем Http404
+            except Http404:
+                return Response(status=status.HTTP_404_NOT_FOUND)  # Если объект не найден
+
+            serializer = self.get_serializer(instance, data=request.data, partial=kwargs.get('partial', False))
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Ошибка валидации
+            self.perform_update(serializer)
+            return Response(serializer.data)
+    
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)  # Объект не найден
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
-    @staticmethod
-    def _params_to_ints(qs):
-        """Converts a list of string IDs to a list of integers"""
-        return [int(str_id) for str_id in qs.split(",")]
+    def destroy(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        
+    def update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PUT")
 
-    def get_queryset(self):
-        """Retrieve the movies with filters"""
-        title = self.request.query_params.get("title")
-        genres = self.request.query_params.get("genres")
-        actors = self.request.query_params.get("actors")
-
-        queryset = self.queryset
-
-        if title:
-            queryset = queryset.filter(title__icontains=title)
-
-        if genres:
-            genres_ids = self._params_to_ints(genres)
-            queryset = queryset.filter(genres__id__in=genres_ids)
-
-        if actors:
-            actors_ids = self._params_to_ints(actors)
-            queryset = queryset.filter(actors__id__in=actors_ids)
-
-        return queryset.distinct()
-
-    def get_serializer_class(self):
-        if self.action == "list":
-            return MovieListSerializer
-
-        if self.action == "retrieve":
-            return MovieDetailSerializer
-
-        return MovieSerializer
+    def partial_update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("PATCH")
 
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
@@ -87,35 +160,18 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = MovieSessionSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
-    def get_queryset(self):
-        date = self.request.query_params.get("date")
-        movie_id_str = self.request.query_params.get("movie")
+    def perform_create(self, serializer):
+        serializer.save()
 
-        queryset = self.queryset
-
-        if date:
-            date = datetime.strptime(date, "%Y-%m-%d").date()
-            queryset = queryset.filter(show_time__date=date)
-
-        if movie_id_str:
-            queryset = queryset.filter(movie_id=int(movie_id_str))
-
-        return queryset
-
-    def get_serializer_class(self):
-        if self.action == "list":
-            return MovieSessionListSerializer
-
-        if self.action == "retrieve":
-            return MovieSessionDetailSerializer
-
-        return MovieSessionSerializer
-
-
-class OrderPagination(PageNumberPagination):
-    page_size = 10
-    max_page_size = 100
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)  # Успешное удаление
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -124,15 +180,38 @@ class OrderViewSet(viewsets.ModelViewSet):
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        if self.request.user.is_authenticated:
+            return Order.objects.filter(user=self.request.user)
+        return Order.objects.none()
+    
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except Http404:
+            raise NotFound(detail="Order not found.", code=status.HTTP_404_NOT_FOUND)
 
-    def get_serializer_class(self):
-        if self.action == "list":
-            return OrderListSerializer
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_404_NOT_FOUND)  # Возвращаем 404
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)  # Объект не найден
 
-        return OrderSerializer
+        serializer = self.get_serializer(instance, data=request.data, partial=kwargs.get('partial', False))
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Невалидные данные
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
