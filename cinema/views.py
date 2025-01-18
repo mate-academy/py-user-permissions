@@ -24,6 +24,7 @@ from .permissions import IsAdminOrIfAuthenticatedReadOnly
 from rest_framework.exceptions import NotFound
 from rest_framework.exceptions import MethodNotAllowed
 
+
 class OrderPagination(PageNumberPagination):
     page_size = 10
     max_page_size = 100
@@ -38,11 +39,17 @@ class GenreViewSet(viewsets.ModelViewSet):
         try:
             instance = self.get_object()
         except Http404:
-            return Response(status=status.HTTP_404_NOT_FOUND)  # Объект не найден
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(instance, data=request.data, partial=kwargs.get('partial', False))
+        serializer = self.get_serializer(
+            instance, data=request.data,
+            partial=kwargs.get("partial", False)
+        )
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Невалидные данные
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
         self.perform_update(serializer)
         return Response(serializer.data)
 
@@ -50,15 +57,15 @@ class GenreViewSet(viewsets.ModelViewSet):
         try:
             instance = self.get_object()
             self.perform_destroy(instance)
-            return Response(status=status.HTTP_404_NOT_FOUND)  # Возвращаем 404
+            return Response(status=status.HTTP_404_NOT_FOUND)
         except Http404:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
+
     def retrieve(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
         except Http404:
-            return Response(status=status.HTTP_404_NOT_FOUND)  # Объект не найден
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -72,14 +79,19 @@ class ActorViewSet(viewsets.ModelViewSet):
         try:
             instance = self.get_object()
         except Http404:
-            return Response(status=status.HTTP_404_NOT_FOUND)  # Объект не найден
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(instance, data=request.data, partial=kwargs.get('partial', False))
+        serializer = self.get_serializer(
+            instance, data=request.data,
+            partial=kwargs.get("partial", False)
+        )
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Невалидные данные
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
         self.perform_update(serializer)
         return Response(serializer.data)
-
 
     def destroy(self, request, *args, **kwargs):
         try:
@@ -88,7 +100,7 @@ class ActorViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)  # Возвращаем 404
         except Http404:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
+
     def retrieve(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
@@ -112,24 +124,30 @@ class CinemaHallViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)  # Возвращаем 404
         except Http404:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
-    def update(self, request, *args, **kwargs):
-            try:
-                instance = self.get_object()  # Получаем объект или выбрасываем Http404
-            except Http404:
-                return Response(status=status.HTTP_404_NOT_FOUND)  # Если объект не найден
 
-            serializer = self.get_serializer(instance, data=request.data, partial=kwargs.get('partial', False))
-            if not serializer.is_valid():
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Ошибка валидации
-            self.perform_update(serializer)
-            return Response(serializer.data)
-    
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(
+            instance, data=request.data,
+            partial=kwargs.get("partial", False)
+        )
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
     def retrieve(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
         except Http404:
-            return Response(status=status.HTTP_404_NOT_FOUND)  # Объект не найден
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -141,7 +159,7 @@ class MovieViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-        
+
     def update(self, request, *args, **kwargs):
         raise MethodNotAllowed("PUT")
 
@@ -169,7 +187,7 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         try:
             instance = self.get_object()
             self.perform_destroy(instance)
-            return Response(status=status.HTTP_204_NO_CONTENT)  # Успешное удаление
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Http404:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -186,32 +204,40 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated:
             return Order.objects.filter(user=self.request.user)
         return Order.objects.none()
-    
+
     def retrieve(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
         except Http404:
-            raise NotFound(detail="Order not found.", code=status.HTTP_404_NOT_FOUND)
+            raise NotFound(
+                detail="Order not found.",
+                code=status.HTTP_404_NOT_FOUND
+            )
 
     def destroy(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
             self.perform_destroy(instance)
-            return Response(status=status.HTTP_404_NOT_FOUND)  # Возвращаем 404
+            return Response(status=status.HTTP_404_NOT_FOUND)
         except Http404:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
+
     def update(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
         except Http404:
-            return Response(status=status.HTTP_404_NOT_FOUND)  # Объект не найден
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(instance, data=request.data, partial=kwargs.get('partial', False))
+        serializer = self.get_serializer(
+            instance, data=request.data,
+            partial=kwargs.get("partial", False)
+        )
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # Невалидные данные
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
         self.perform_update(serializer)
         return Response(serializer.data)
-

@@ -9,8 +9,8 @@ from cinema.models import Actor
 from cinema.serializers import GenreSerializer
 from collections import OrderedDict
 
-
 from .models import User
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
+        password = validated_data.pop("password", None)
         instance = super().update(instance, validated_data)
         if password:
             instance.set_password(password)  # Устанавливаем новый пароль
@@ -27,13 +27,12 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 User = get_user_model()
 
+
 class UserRegisterSerializer(serializers.ModelSerializer):
-    #is_staff = serializers.BooleanField(read_only=True)  # Добавляем поле
     password = serializers.CharField(write_only=True, min_length=5)
-    
+
     class Meta:
         model = User
         fields = ("id", "username", "password", "email")
@@ -42,9 +41,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
-    
+
     def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
+        password = validated_data.pop("password", None)
         if password:
             instance.set_password(password)  # Устанавливаем новый пароль
         return super().update(instance, validated_data)
@@ -70,7 +69,7 @@ class MovieDetailSerializer(serializers.ModelSerializer):
         fields = ("id", "title", "description", "duration", "genres", "actors")
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action == "retrieve":
             return MovieDetailSerializer
         return super().get_serializer_class()
 
@@ -78,4 +77,4 @@ class MovieDetailSerializer(serializers.ModelSerializer):
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = "__all__"

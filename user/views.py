@@ -6,9 +6,11 @@ from rest_framework.permissions import AllowAny
 from .serializers import UserRegisterSerializer, UserLoginSerializer
 from .serializers import UserSerializer
 
+
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserRegisterSerializer
     permission_classes = [AllowAny]
+
 
 class UserLoginView(generics.GenericAPIView):
     serializer_class = UserLoginSerializer
@@ -24,10 +26,14 @@ class UserLoginView(generics.GenericAPIView):
         if user:
             token, created = Token.objects.get_or_create(user=user)
             return Response({"token": token.key})
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Invalid credentials"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
 
 class UserMeView(generics.RetrieveUpdateAPIView):
-    serializer_class = UserSerializer  # Используем сериализатор с полем is_staff
+    serializer_class = UserSerializer
 
     def get_object(self):
         return self.request.user
