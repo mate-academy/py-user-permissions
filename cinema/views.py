@@ -166,6 +166,16 @@ class MovieViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         raise MethodNotAllowed("PATCH")
 
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        # Используем детальный сериализатор для детального представления
+        serializer = MovieDetailSerializer(instance)
+        return Response(serializer.data)
+
 
 class MovieSessionViewSet(viewsets.ModelViewSet):
     queryset = (
@@ -190,6 +200,16 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Http404:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+        except Http404:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        # Используем MovieSessionDetailSerializer для детального представления
+        serializer = MovieSessionDetailSerializer(instance)
+        return Response(serializer.data)
 
 
 class OrderViewSet(viewsets.ModelViewSet):
