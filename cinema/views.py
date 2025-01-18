@@ -6,7 +6,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.pagination import PageNumberPagination
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-from cinema.permissions import IsAdminOrIfAuthenticatedReadOnly, IsAdminOrCreate
+from cinema.permissions import (IsAdminOrIfAuthenticatedReadOnly,
+                                IsAdminOrCreate)
 from cinema.serializers import (
     GenreSerializer,
     ActorSerializer,
@@ -33,7 +34,7 @@ class GenreViewSet(generics.ListAPIView,
 
 class ActorViewSet(viewsets.GenericViewSet,
                    generics.ListAPIView,
-                   generics.CreateAPIView,):
+                   generics.CreateAPIView, ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
     authentication_classes = (TokenAuthentication,)
@@ -42,7 +43,7 @@ class ActorViewSet(viewsets.GenericViewSet,
 
 class CinemaHallViewSet(viewsets.GenericViewSet,
                         generics.ListAPIView,
-                        generics.CreateAPIView,):
+                        generics.CreateAPIView, ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
     authentication_classes = (TokenAuthentication,)
@@ -52,7 +53,7 @@ class CinemaHallViewSet(viewsets.GenericViewSet,
 class MovieViewSet(viewsets.GenericViewSet,
                    generics.ListAPIView,
                    generics.CreateAPIView,
-                   generics.RetrieveAPIView,):
+                   generics.RetrieveAPIView, ):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
     authentication_classes = (TokenAuthentication,)
@@ -100,8 +101,8 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         .select_related("movie", "cinema_hall")
         .annotate(
             tickets_available=F("cinema_hall__rows")
-                              * F("cinema_hall__seats_in_row")
-                              - Count("tickets")
+            * F("cinema_hall__seats_in_row")
+            - Count("tickets")
         )
     )
     serializer_class = MovieSessionSerializer
@@ -140,7 +141,7 @@ class OrderPagination(PageNumberPagination):
 
 class OrderViewSet(viewsets.GenericViewSet,
                    generics.ListAPIView,
-                   generics.CreateAPIView,):
+                   generics.CreateAPIView, ):
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
