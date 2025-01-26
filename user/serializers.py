@@ -11,14 +11,14 @@ class UserSerializer(serializers.ModelSerializer):
             "password": {"write_only": True, "min_length": 5}
         }
 
-    def create(self, validated_data: dict) -> get_user_model():
+    def create(self, validated_data: dict) -> get_user_model:
         return get_user_model().objects.create_user(**validated_data)
 
     def update(
         self,
-        instance: get_user_model(),
+        instance: get_user_model,
         validated_data: dict
-    ) -> get_user_model():
+    ) -> get_user_model:
         password = validated_data.pop("password", None)
         user = super().update(instance, validated_data)
 
