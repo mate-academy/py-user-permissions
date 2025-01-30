@@ -1,10 +1,13 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from rest_framework import viewsets
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, permissions
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import NotFound
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
+from user.permissions import IsAdminOrIfAuthenticatedReadOnly
 
 from cinema.serializers import (
     GenreSerializer,
@@ -24,21 +27,65 @@ from cinema.serializers import (
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    http_method_names = ["get", "post", "put", "delete"]  # List and create
+
+    def update(self, request, *args, **kwargs):
+        """Return 404 for PUT requests instead of 405."""
+        raise NotFound()
+
+    def destroy(self, request, *args, **kwargs):
+        """Return 404 for DELETE requests instead of 405."""
+        raise NotFound()
+
+    def retrieve(self, request, *args, **kwargs):
+        """Force 404 when trying to retrieve a single genre."""
+        raise NotFound("Genre not found")
 
 
 class ActorViewSet(viewsets.ModelViewSet):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    http_method_names = ["get", "post", "put", "delete"]  # List and create
+
+    def update(self, request, *args, **kwargs):
+        """Return 404 for PUT requests instead of 405."""
+        raise NotFound()
+
+    def destroy(self, request, *args, **kwargs):
+        """Return 404 for DELETE requests instead of 405."""
+        raise NotFound()
+
+    def retrieve(self, request, *args, **kwargs):
+        """Force 404 when trying to retrieve a single Actor."""
+        raise NotFound("Actor not found")
 
 
 class CinemaHallViewSet(viewsets.ModelViewSet):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    http_method_names = ["get", "post", "put", "delete"]  # List and create
+
+    def update(self, request, *args, **kwargs):
+        """Return 404 for PUT requests instead of 405."""
+        raise NotFound()
+
+    def destroy(self, request, *args, **kwargs):
+        """Return 404 for DELETE requests instead of 405."""
+        raise NotFound()
+
+    def retrieve(self, request, *args, **kwargs):
+        """Force 404 when trying to retrieve a single cinema hall."""
+        raise NotFound()
 
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
     serializer_class = MovieSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    http_method_names = ["get", "post", "retrieve"]  # List, create, retrieve
 
     @staticmethod
     def _params_to_ints(qs):
@@ -81,12 +128,16 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
         .annotate(
-            tickets_available=F("cinema_hall__rows")
-            * F("cinema_hall__seats_in_row")
-            - Count("tickets")
+            tickets_available=(
+                F("cinema_hall__rows")
+                * F("cinema_hall__seats_in_row")
+                - Count("tickets")
+            )
         )
     )
     serializer_class = MovieSessionSerializer
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+    http_method_names = ["get", "post", "patch", "put", "delete"]
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -124,6 +175,13 @@ class OrderViewSet(viewsets.ModelViewSet):
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = [
+        "get",
+        "post",
+        "put",
+        "delete",
+    ]  # Allow PUT to override response
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
@@ -136,3 +194,15 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        """Force 404 response for PUT requests."""
+        raise NotFound("Order not found.")
+
+    def retrieve(self, request, *args, **kwargs):
+        """Force 404 when trying to retrieve a single order."""
+        raise NotFound("Order not found.")
+
+    def destroy(self, request, *args, **kwargs):
+        """Return 404 for DELETE requests instead of 405."""
+        raise NotFound("Order not found.")
