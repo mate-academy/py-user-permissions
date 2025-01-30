@@ -76,10 +76,10 @@ class CinemaHallViewSet(viewsets.ModelViewSet):
         """Return 404 for DELETE requests instead of 405."""
         raise NotFound()
 
-
     def retrieve(self, request, *args, **kwargs):
         """Force 404 when trying to retrieve a single cinema hall."""
         raise NotFound()
+
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.prefetch_related("genres", "actors")
@@ -128,9 +128,8 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
         .annotate(
-            tickets_available=F("cinema_hall__rows")
-                              * F("cinema_hall__seats_in_row")
-                              - Count("tickets")
+            tickets_available=F("cinema_hall__rows") * F("cinema_hall__seats_in_row")
+            - Count("tickets")
         )
     )
     serializer_class = MovieSessionSerializer
@@ -174,7 +173,12 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
     permission_classes = [permissions.IsAuthenticated]  # Only authenticated users
-    http_method_names = ["get", "post", "put", "delete"]  # Allow PUT to override response
+    http_method_names = [
+        "get",
+        "post",
+        "put",
+        "delete",
+    ]  # Allow PUT to override response
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)

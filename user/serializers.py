@@ -2,7 +2,6 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
 
-
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -13,7 +12,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return get_user_model().objects.create_user(**validated_data)
-
 
     def update(self, instance, validated_data):
         """Update user with encrypted password."""
