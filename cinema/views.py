@@ -128,13 +128,16 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
         MovieSession.objects.all()
         .select_related("movie", "cinema_hall")
         .annotate(
-            tickets_available=F("cinema_hall__rows") * F("cinema_hall__seats_in_row")
-            - Count("tickets")
+            tickets_available=(
+                F("cinema_hall__rows")
+                * F("cinema_hall__seats_in_row")
+                - Count("tickets")
+            )
         )
     )
     serializer_class = MovieSessionSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
-    http_method_names = ["get", "post", "patch", "put", "delete"]  # All actions
+    http_method_names = ["get", "post", "patch", "put", "delete"]
 
     def get_queryset(self):
         date = self.request.query_params.get("date")
@@ -172,7 +175,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users
+    permission_classes = [permissions.IsAuthenticated]
     http_method_names = [
         "get",
         "post",
